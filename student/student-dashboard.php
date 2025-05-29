@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 if (!isset($_SESSION['student_id'])) {
@@ -35,15 +36,16 @@ $studentID = $student['student_number'] ?? 'Not Assigned';
 $course = $student['course'] ?? 'N/A';
 $yearLevel = $student['year_level'] ?? 'N/A';
 $photo = $student['photo'] ?? 'uploads/ran.jpg';
-// Get latest enrollment info for this student
-$enrollInfo = $pdo->prepare("SELECT status, program, semester, school_year FROM enrollments WHERE student_id = ? ORDER BY date_submitted DESC LIMIT 1");
+
+// Fixed SQL: use 'year' instead of 'school_year'
+$enrollInfo = $pdo->prepare("SELECT status, program, semester, year FROM enrollments WHERE student_id = ? ORDER BY date_submitted DESC LIMIT 1");
 $enrollInfo->execute([$student_id]);
 $enrollment = $enrollInfo->fetch(PDO::FETCH_ASSOC);
 
 $enrollmentStatus = $enrollment['status'] ?? 'Not Enrolled';
 $program = $enrollment['program'] ?? $course;
 $semesterText = $enrollment['semester'] ?? 'N/A';
-$schoolYear = $enrollment['school_year'] ?? 'N/A';
+$schoolYear = $enrollment['year'] ?? 'N/A';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile'])) {
     $targetDir = "uploads/";
@@ -329,10 +331,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile'])) {
         </a> -->
       </div>
     </section>
-  </main>
-
-  <?php include 'dashboard-sections.html'; ?>
-
 </main>
 
 <footer>

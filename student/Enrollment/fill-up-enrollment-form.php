@@ -1,9 +1,18 @@
 <?php
-// DB connection settings - change these!
+session_start(); // ✅ Important
+
+// Check if student is logged in
+if (!isset($_SESSION['student_id'])) {
+    header("Location: ../logregfor/login.php");
+    exit;
+}
+
+$student_id = $_SESSION['student_id'];
+
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "your_database_name";
+$dbname = "enrollment_system";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
@@ -15,7 +24,6 @@ $submitted = false;
 $errors = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $program = $_POST['program'] ?? "";
     $yearLevel = $_POST['yearLevel'] ?? "";
     $semester = $_POST['semester'] ?? "";
@@ -27,17 +35,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($section)) $errors[] = "Please select a Section.";
 
     if (empty($errors)) {
-        // Prepare and bind
-        $stmt = $conn->prepare("INSERT INTO enrollments (program, year_level, semester, section) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $program, $yearLevel, $semester, $section);
+        // Check if student exists before inserting
+        $check = $conn->prepare("SELECT id FROM students WHERE id = ?");
+        $check->bind_param("i", $student_id);
+        $check->execute();
+        $check->store_result();
 
-        if ($stmt->execute()) {
-            $submitted = true;
+        if ($check->num_rows === 0) {
+            $errors[] = "Invalid student ID. Please log in again.";
         } else {
-            $errors[] = "Failed to submit enrollment. Please try again.";
+            $stmt = $conn->prepare("INSERT INTO enrollments (student_id, program, year_level, semester, section) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("issss", $student_id, $program, $yearLevel, $semester, $section);
+
+            if ($stmt->execute()) {
+                $submitted = true;
+            } else {
+                $errors[] = "Failed to submit enrollment: " . $stmt->error;
+            }
+
+            $stmt->close();
         }
 
-        $stmt->close();
+        $check->close();
     }
 }
 

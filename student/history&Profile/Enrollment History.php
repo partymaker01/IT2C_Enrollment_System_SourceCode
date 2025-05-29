@@ -15,43 +15,55 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Get all enrollments of the student with subjects
-    $stmt = $pdo->prepare("
-        SELECT e.enrollment_id, e.semester, e.program, e.year_level, e.section, e.enrollment_date, e.status,
-               s.subject_code, s.title, s.schedule, s.units
-        FROM enrollments e
-        LEFT JOIN enrollment_subjects es ON e.enrollment_id = es.enrollment_id
-        LEFT JOIN subjects s ON es.subject_id = s.subject_id
-        WHERE e.student_id = ?
-        ORDER BY e.enrollment_date DESC, s.title ASC
-    ");
+      $stmt = $pdo->prepare("
+    SELECT 
+        e.id AS enrollment_id, 
+        e.semester, 
+        e.program, 
+        e.year_level, 
+        e.section, 
+        e.date_submitted AS enrollment_date, 
+        e.status,
+        s.subject_code AS subject_code, 
+        s.subject_title AS title, 
+        CONCAT(s.day, ' ', s.time, ' @ ', s.room) AS schedule, 
+        s.units
+    FROM enrollments e
+    LEFT JOIN enrollment_subjects es ON e.id = es.enrollment_id
+    LEFT JOIN subjects s ON es.subject_code = s.subject_code
+    WHERE e.student_id = ?
+    ORDER BY e.date_submitted DESC, s.subject_title ASC
+");
 
     $stmt->execute([$student_id]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Organize data to group subjects under each enrollment
     $enrollments = [];
-    foreach ($rows as $row) {
-        $eid = $row['enrollment_id'];
-        if (!isset($enrollments[$eid])) {
-            $enrollments[$eid] = [
-                'semester' => $row['semester'],
-                'program' => $row['program'],
-                'year' => $row['year_level'],
-                'section' => $row['section'],
-                'date' => date("F j, Y", strtotime($row['enrollment_date'])),
-                'status' => $row['status'],
-                'subjects' => []
-            ];
-        }
-        if ($row['subject_code']) {
-            $enrollments[$eid]['subjects'][] = [
-                'code' => $row['subject_code'],
-                'title' => $row['title'],
-                'schedule' => $row['schedule'],
-                'units' => $row['units']
-            ];
-        }
-    }
+      foreach ($rows as $row) {
+          $eid = $row['enrollment_id']; // ✅ Ito ang tamang pwesto
+
+          if (!isset($enrollments[$eid])) {
+              $enrollments[$eid] = [
+                  'semester' => $row['semester'],
+                  'program' => $row['program'],
+                  'year' => $row['year_level'],
+                  'section' => $row['section'],
+                  'date' => date("F j, Y", strtotime($row['enrollment_date'])),
+                  'status' => $row['status'],
+                  'subjects' => []
+              ];
+          }
+
+          if ($row['subject_code']) {
+              $enrollments[$eid]['subjects'][] = [
+                  'code' => $row['subject_code'],
+                  'title' => $row['title'],
+                  'schedule' => $row['schedule'],
+                  'units' => $row['units']
+              ];
+          }
+      }
 
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -152,6 +164,14 @@ try {
                     </tbody>
                   </table>
                 </div>
+
+                <form action="download-slip.php" method="post" target="_blank">
+                  <input type="hidden" name="enrollment_id" value="<?= $index ?>">
+                  <input type="hidden" name="data" value="<?= htmlspecialchars(json_encode($entry), ENT_QUOTES, 'UTF-8') ?>">
+                  <button type="submit" class="btn btn-success mt-3">
+                    <i class="bi bi-download me-1"></i> Download Enrollment Slip
+                  </button>
+                </form>
 
                 <a href="#" class="btn btn-success mt-3"><i class="bi bi-download me-1"></i> Download Enrollment Slip</a>
               </div>

@@ -2,8 +2,8 @@
 // database config - change these to your own MySQL credentials
 $host = 'localhost';
 $db   = 'enrollment_system';
-$user = 'your_db_username';
-$pass = 'your_db_password';
+$user = 'root'; // or your actual DB username
+$pass = '';     // or your actual DB password
 
 // create mysqli connection
 $conn = new mysqli($host, $user, $pass, $db);
@@ -36,7 +36,9 @@ $conn->close();
   <title>View All Students - Enrollment System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/IT2C_Enrollment_System_SourceCode/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
   <style>
     body {
       background-color: #e6f2e6;
@@ -93,93 +95,77 @@ $conn->close();
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-success py-3">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
-      Admin Panel
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo" onerror="this.src='https://via.placeholder.com/50';" />
+        Admin Panel
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/ADMIN/admin-dashboard.php" class="btn btn-outline-secondary mb-3">
-          <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-      </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/ADMIN/admin-dashboard.php">
+              <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </nav> 
+
   <div class="container my-5">
-    <h2 class="text-center mb-4 text-success">
-      View All Students
-    </h2>
+    <h2 class="text-center mb-4 text-success">View All Students</h2>
 
     <div class="d-flex justify-content-between mb-3 align-items-center flex-wrap gap-2">
       <div class="input-group search-bar">
-          <span class="input-group-text" id="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.442 1.06a5 5 0 1 1 0-7.071 5 5 0 0 1 0 7.07z"/>
-            </svg>
-          </span>
-          <input type="search" id="searchInput" class="form-control" placeholder="Search students..." aria-label="Search students" aria-describedby="search-icon" onkeyup="searchTable()" />
-        </div>
-        <div class="d-flex gap-2">
-          <a href="/IT2C_Enrollment_System_SourceCode/ADMIN/Student_Management/add-new-student.php" class="btn btn-success">
-            Add New Student
-          </a>
-        </div>
+        <span class="input-group-text" id="search-icon">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" id="searchInput" class="form-control" placeholder="Search students..." aria-label="Search students" aria-describedby="search-icon" onkeyup="searchTable()" />
       </div>
+      <div class="d-flex gap-2">
+        <a href="/IT2C_Enrollment_System_SourceCode/ADMIN/Student_Management/add-new-student.php" class="btn btn-success">
+          Add New Student
+        </a>
+      </div>
+    </div>
+
     <div class="table-responsive shadow-sm rounded">
       <table class="table table-bordered table-hover align-middle mb-0" id="studentsTable" aria-describedby="studentTableDesc">
-        <caption id="studentTableDesc" class="visually-hidden">
-          List of all students in the enrollment system
-        </caption>
+        <caption id="studentTableDesc" class="visually-hidden">List of all students in the enrollment system</caption>
         <thead>
           <tr>
-            <th scope="col">
-              Student ID
-            </th>
-            <th scope="col">
-              Full Name
-            </th>
-            <th scope="col">
-              Program
-            </th>
-            <th scope="col">
-              Year Level
-            </th>
-            <th scope="col">
-              Contact Number
-            </th>
-            <th scope="col" class="text-center">
-              Actions
-            </th>
+            <th scope="col">Student ID</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Program</th>
+            <th scope="col">Year Level</th>
+            <th scope="col">Contact Number</th>
+            <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php if (!empty($students)): ?>
             <?php foreach ($students as $student): ?>
-            <tr>
-              <td><?= htmlspecialchars($student['id']) ?></td>
-              <td><?= htmlspecialchars($student['fullname']) ?></td>
-              <td><?= htmlspecialchars($student['program']) ?></td>
-              <td><?= htmlspecialchars($student['year_level']) ?></td>
-              <td><?= htmlspecialchars($student['contact']) ?></td>
-              <td class="text-center">
-                <a href="view-student-details.php?id=<?= urlencode($student['id']) ?>" class="btn btn-primary btn-sm me-1" title="View details">
-                  <i class="bi bi-eye"></i> View
-                </a>
-                <a href="edit-student.php?id=<?= urlencode($student['id']) ?>" class="btn btn-warning btn-sm me-1" title="Edit student">
-                  <i class="bi bi-pencil-square"></i>
-                  Edit
-                </a>
-                <button class="btn btn-danger btn-sm" title="Delete student" data-bs-toggle="modal" data-bs-target="#deleteModal" data-student-id="<?= htmlspecialchars($student['id']) ?>">
-                  <i class="bi bi-trash"></i>
-                  Delete
-                </button>
-              </td>
-            </tr>
+              <tr>
+                <td><?= htmlspecialchars($student['id']) ?></td>
+                <td><?= htmlspecialchars($student['fullname']) ?></td>
+                <td><?= htmlspecialchars($student['program']) ?></td>
+                <td><?= htmlspecialchars($student['year_level']) ?></td>
+                <td><?= htmlspecialchars($student['contact']) ?></td>
+                <td class="text-center">
+                  <a href="view-student-details.php?id=<?= urlencode($student['id']) ?>" class="btn btn-primary btn-sm me-1">
+                    <i class="bi bi-eye"></i> View
+                  </a>
+                  <a href="edit-student.php?id=<?= urlencode($student['id']) ?>" class="btn btn-warning btn-sm me-1">
+                    <i class="bi bi-pencil-square"></i> Edit
+                  </a>
+                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-student-id="<?= htmlspecialchars($student['id']) ?>">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </td>
+              </tr>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
@@ -200,9 +186,7 @@ $conn->close();
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Are you sure you want to delete student
-          <strong id="studentToDelete"></strong>
-          ?
+          Are you sure you want to delete student <strong id="studentToDelete"></strong>?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -211,8 +195,6 @@ $conn->close();
       </div>
     </div>
   </div>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
   <script>
     function searchTable() {
@@ -226,23 +208,22 @@ $conn->close();
       }
     }
 
-    // Delete modal handling
-    var deleteModal = document.getElementById('deleteModal');
-    var studentToDeleteSpan = document.getElementById('studentToDelete');
-    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-    var studentIdToDelete = null;
+    // Delete modal logic
+    let studentIdToDelete = null;
+    const deleteModal = document.getElementById('deleteModal');
+    const studentToDeleteSpan = document.getElementById('studentToDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
     deleteModal.addEventListener('show.bs.modal', function(event) {
-      var button = event.relatedTarget;
+      const button = event.relatedTarget;
       studentIdToDelete = button.getAttribute('data-student-id');
-      var row = button.closest('tr');
-      var studentName = row.querySelector('td:nth-child(2)').textContent;
+      const row = button.closest('tr');
+      const studentName = row.querySelector('td:nth-child(2)').textContent;
       studentToDeleteSpan.textContent = studentName;
     });
 
     confirmDeleteBtn.addEventListener('click', function() {
-      if(studentIdToDelete){
-        // Redirect to a delete handler PHP script with student ID as a GET parameter
+      if (studentIdToDelete) {
         window.location.href = 'delete-student.php?id=' + encodeURIComponent(studentIdToDelete);
       }
     });

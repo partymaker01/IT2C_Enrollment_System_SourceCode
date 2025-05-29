@@ -28,13 +28,10 @@ $programs_count = 0;
 $course_data = [];
 
 // Total Students
-if ($result = $conn->query("SELECT course, COUNT(*) AS total FROM students GROUP BY course")) {
-    while ($row = $result->fetch_assoc()) {
-        $course_data[] = $row;
-    }
+if ($result = $conn->query("SELECT COUNT(*) AS total FROM students")) {
+    $row = $result->fetch_assoc();
+    $total_students = $row['total'] ?? 0;
     $result->free();
-
-    // ❌ Session timeout block is wrongfully here
 }
 
 // Total Staff
@@ -64,7 +61,7 @@ if ($result = $conn->query("SELECT course, COUNT(*) AS total FROM students GROUP
         $course_data[] = $row;
     }
     $result->free();
-} // ← DITO LAGAY ANG KULANG MONG BRACKET
+}
 ?>
 
 <!DOCTYPE html>

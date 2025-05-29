@@ -112,6 +112,22 @@ CREATE TABLE enrollments_student (
   FOREIGN KEY (`student_id`) REFERENCES `students`(`id`) ON DELETE CASCADE
 );
 
+
+
+CREATE TABLE enrollment_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(20) NOT NULL,
+    program VARCHAR(100),
+    year_level VARCHAR(10),
+    semester VARCHAR(10),
+    section VARCHAR(10),
+    date_submitted DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    remarks TEXT,
+    notification TEXT
+);
+
+
 -- END OF FILE: enromment-status-student.sql
 
 
@@ -237,5 +253,104 @@ CREATE TABLE pending_enrollments (
   program VARCHAR(100) NOT NULL,
   date_submitted DATE NOT NULL
 );
--- END OF FILE: view-pending-enrollemnt.sql
 
+CREATE TABLE uploaded_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    document_type VARCHAR(255) NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Uploaded',
+    remarks TEXT DEFAULT 'Waiting for verification',
+    reupload BOOLEAN DEFAULT 0,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE uploaded_documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  document_type VARCHAR(255),
+  filename VARCHAR(255),
+  upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(50) DEFAULT 'Uploaded',
+  remarks TEXT DEFAULT 'Waiting for verification',
+  reupload BOOLEAN DEFAULT 0
+);
+
+-- Drop old table if you are okay with resetting it
+DROP TABLE IF EXISTS uploaded_documents;
+
+-- Recreate with correct structure
+CREATE TABLE uploaded_documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  document_type VARCHAR(255) NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(50) DEFAULT 'Uploaded',
+  remarks TEXT DEFAULT 'Waiting for verification',
+  reupload BOOLEAN DEFAULT 0
+);
+
+ALTER TABLE uploaded_documents
+ADD COLUMN document_type VARCHAR(255) NOT NULL AFTER student_id;
+ALTER TABLE uploaded_documents
+ADD COLUMN upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE student_documents ADD status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending';
+
+-- Drop the incorrect FK and fix the reference
+ALTER TABLE enrollment_subjects DROP FOREIGN KEY enrollment_subjects_ibfk_1;
+
+ALTER TABLE enrollment_subjects
+ADD CONSTRAINT fk_enrollment_subjects_enrollments
+FOREIGN KEY (enrollment_id) REFERENCES enrollments(id);
+
+SELECT 
+  e.id AS enrollment_id, 
+  e.semester, 
+  e.program, 
+  e.year_level, 
+  e.section, 
+  e.date_submitted AS enrollment_date, 
+  e.status, 
+  s.subject_code AS subject_code, 
+  s.subject_title AS title, 
+  CONCAT(s.day, ' ', s.time, ' @ ', s.room) AS schedule, 
+  s.units 
+FROM enrollments e 
+LEFT JOIN enrollment_subjects es ON e.id = es.enrollment_id 
+LEFT JOIN subjects s ON es.subject_code = s.subject_code 
+WHERE e.student_id = 1 
+ORDER BY e.date_submitted DESC, s.subject_title ASC;
+
+INSERT INTO admin_settings (name, email, email_notify, sms_notify, maintenance_mode, auto_backup, password)
+VALUES ('Administrator', 'admin@example.com', TRUE, FALSE, FALSE, TRUE, 
+'$2y$10$TKh8H1.Pri7en2ZWjiOgVeuUIZ9W9LZ9ZxQAw/0JX2jXQozj8fG4W')
+
+CREATE TABLE IF NOT EXISTS admins (
+    admin_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS admins (
+    admin_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO admins (admin_id, password_hash)
+VALUES (1, '$2y$10$TKh8H1.Pri7en2ZWjiOgVeuUIZ9W9LZ9ZxQAw/0JX2jXQozj8fG4W');
+
+ALTER TABLE admin_settings ADD UNIQUE (email);
+
+ALTER TABLE admin_settings ADD COLUMN username VARCHAR(100) NOT NULL UNIQUE AFTER name;
+
+INSERT INTO admin_settings (username, name, email, email_notify, sms_notify, maintenance_mode, auto_backup, password)
+VALUES ('admin', 'Administrator', 'admin@example.com', 1, 0, 0, 1, 
+'$2y$10$TKh8H1.Pri7en2ZWjiOgVeuUIZ9W9LZ9ZxQAw/0JX2jXQozj8fG4W');
+
+
+
+-- The password is: admin123

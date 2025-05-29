@@ -1,8 +1,8 @@
 <?php
 // Database connection - update with your credentials
 $host = "localhost";
-$user = "root";
-$pass = "";
+$user = "root"; // dapat hindi 'your_username'
+$pass = "";     // depende kung may password ang root user mo
 $db = "enrollment_system";
 
 $conn = new mysqli($host, $user, $pass, $db);

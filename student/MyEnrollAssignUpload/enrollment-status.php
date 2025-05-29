@@ -1,11 +1,9 @@
 <?php
 session_start();
-include 'db.php';  // Your DB connection file
+include '../../db.php';  // FIXED: correct path
 
-// Simulate logged-in student id (replace with your session variable)
 $student_id = $_SESSION['student_id'] ?? 1; 
 
-// Prepare SQL to fetch enrollment for this student
 $sql = "SELECT * FROM enrollments WHERE student_id = ? ORDER BY date_submitted DESC LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $student_id);
@@ -115,10 +113,11 @@ $enrollment = $result->fetch_assoc();
     <?php endif; ?>
   </div>
   <?php else: ?>
-  <div class="alert alert-warning mt-4" role="alert">
-    No enrollment found. Please fill up the
-    <a href="fill-up-enrollment.php">Enrollment Form</a>.
-  </div>
+    <div class="alert alert-warning mt-4" role="alert">
+  No enrollment found. Please fill up the
+  <a href="/IT2C_Enrollment_System_SourceCode/student/Enrollment/fill-up-enrollment-form.php">Enrollment Form</a>.
+</div>
+
   <?php endif; ?>
 </div>
 

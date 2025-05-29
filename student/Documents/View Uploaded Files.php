@@ -2,8 +2,8 @@
 // Database connection parameters - replace with your actual credentials
 $host = 'localhost';
 $dbname = 'enrollment_system';
-$user = 'your_username';
-$pass = 'your_password';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [

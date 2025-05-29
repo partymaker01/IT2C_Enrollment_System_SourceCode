@@ -1,38 +1,41 @@
 <?php
 session_start();
 
-// Database connection info - EDIT your own credentials here
+// Database connection info
 $host = "localhost";
 $dbname = "enrollment_system";
 $username = "root";
-$password = ""; // put your DB password here
+$password = "";
 
 // Create connection using PDO
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    // Set error mode
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
 
-// Get student_id from session or set default for demo
-$student_name = $_SESSION['student_name'] ?? "Jerick Dela Cruz Reyes";
+// Ensure student is logged in
+if (!isset($_SESSION['student_number'])) {
+    die("Unauthorized access.");
+}
 
-// For demo, get student info from DB by name (better: store student_id in session)
-$stmtStudent = $pdo->prepare("SELECT * FROM students WHERE student_name = :student_name LIMIT 1");
-$stmtStudent->execute(['student_name' => $student_name]);
+$student_number = $_SESSION['student_number'];
+
+// Fetch student by student_number
+$stmtStudent = $pdo->prepare("SELECT * FROM students WHERE student_number = :student_number LIMIT 1");
+$stmtStudent->execute(['student_number' => $student_number]);
 $student = $stmtStudent->fetch(PDO::FETCH_ASSOC);
 
 if (!$student) {
-    die("Student not found in the database.");
+    die("Student not found.");
 }
 
-// Get semester and school year from GET params, default values
+// Get semester and school year from GET or use defaults
 $semester = $_GET['semester'] ?? '1st Semester';
 $school_year = $_GET['school_year'] ?? '2024-2025';
 
-// Query assigned subjects for this student in this semester and school year
+// Fetch assigned subjects
 $sqlSubjects = "SELECT s.subject_code, s.subject_title, s.instructor, s.day, s.time, s.room, s.units
                 FROM subjects s
                 JOIN student_subjects ss ON s.id = ss.subject_id
@@ -49,7 +52,6 @@ $stmtSubjects->execute([
 ]);
 $subjects = $stmtSubjects->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,10 +128,10 @@ $subjects = $stmtSubjects->fetchAll(PDO::FETCH_ASSOC);
   </nav>
 
   <div class="container mt-5">
-    <h2 class="mb-4">Assigned Subjects for <?= htmlspecialchars($student['student_name']) ?></h2>
-    <p><strong>Program:</strong> <?= htmlspecialchars($student['program']) ?></p>
-    <p><strong>Year Level:</strong> <?= htmlspecialchars($student['year_level']) ?></p>
-    <p><strong>Section:</strong> <?= htmlspecialchars($student['section']) ?></p>
+    <h2 class="mb-4">Assigned Subjects<?= htmlspecialchars($student['student_name']) ?></h2>
+    <p><strong>Program:</strong> <?= htmlspecialchars($student['program'] ?? 'N/A') ?></p>
+    <p><strong>Year Level:</strong> <?= htmlspecialchars($student['year_level'] ?? 'N/A') ?></p>
+    <p><strong>Section:</strong> <?= htmlspecialchars($student['section'] ?? 'N/A') ?></p>
 
     <form method="GET" class="row g-3 mb-4 no-print">
       <div class="col-md-4">

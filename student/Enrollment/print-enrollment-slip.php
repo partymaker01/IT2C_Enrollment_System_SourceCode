@@ -1,5 +1,5 @@
 <?php
-// DB config (adjust with your own)
+// DB config
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -10,25 +10,39 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// Get enrollment id from URL, e.g. enrollment-slip.php?id=1
+// Get enrollment id from URL
 $enrollment_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($enrollment_id <= 0) {
-    die("Invalid enrollment ID.");
+    die("❌ Invalid enrollment ID.");
 }
 
-// Fetch enrollment info
-$sqlEnrollment = "SELECT * FROM enrollments WHERE id = ?";
+// Fetch enrollment info (only if status is Approved)
+$sqlEnrollment = "SELECT * FROM enrollments WHERE id = ? AND status = 'Approved'";
 $stmt = $conn->prepare($sqlEnrollment);
 $stmt->bind_param("i", $enrollment_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
-    die("Enrollment not found.");
+    die("❌ Enrollment not found or not yet approved. Please wait for admin confirmation.");
 }
 
 $enrollment = $result->fetch_assoc();
+
+// Check if studentID is empty, then generate and update
+if (empty($enrollment['studentID'])) {
+    $currentYear = date("Y");
+    $studentID = $currentYear . '-' . str_pad($enrollment_id, 4, '0', STR_PAD_LEFT);
+
+    $updateStmt = $conn->prepare("UPDATE enrollments SET studentID = ? WHERE id = ?");
+    $updateStmt->bind_param("si", $studentID, $enrollment_id);
+    $updateStmt->execute();
+    $updateStmt->close();
+
+    // Refresh local value
+    $enrollment['studentID'] = $studentID;
+}
 
 // Fetch subjects linked to enrollment
 $sqlSubjects = "SELECT * FROM subjects WHERE enrollment_id = ?";
@@ -114,9 +128,11 @@ $conn->close();
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
+              <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -131,69 +147,87 @@ $conn->close();
       <h5 class="fw-bold text-success">Enrollment Slip / Certificate</h5>
     </div>
 
-    <div class="enrollment-slip">
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <p><strong>Student Name:</strong> <?= htmlspecialchars($enrollment['studentName']) ?></p>
-          <p><strong>Student ID:</strong> <?= htmlspecialchars($enrollment['studentID']) ?></p>
-        </div>
-        <div class="col-md-6">
-          <p><strong>Program:</strong> <?= htmlspecialchars($enrollment['program']) ?></p>
-          <p><strong>Year Level:</strong> <?= htmlspecialchars($enrollment['yearLevel']) ?></p>
-        </div>
-      </div>
-
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <p><strong>Semester:</strong> <?= htmlspecialchars($enrollment['semester']) ?></p>
-          <p><strong>Section:</strong> <?= htmlspecialchars($enrollment['section']) ?></p>
-        </div>
-        <div class="col-md-6">
-          <p><strong>Date Submitted:</strong> <?= date("F d, Y", strtotime($enrollment['dateSubmitted'])) ?></p>
-          <p><strong>Status:</strong> 
-            <span class="badge bg-success badge-status">
-              <?= htmlspecialchars($enrollment['status']) ?>
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <h5 class="mb-3">Assigned Subjects / Class Schedule</h5>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Subject Code</th>
-              <th>Subject Title</th>
-              <th>Units</th>
-              <th>Schedule</th>
-              <th>Instructor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if (count($subjects) > 0): ?>
-              <?php foreach ($subjects as $subject): ?>
-                <tr>
-                  <td><?= htmlspecialchars($subject['code']) ?></td>
-                  <td><?= htmlspecialchars($subject['title']) ?></td>
-                  <td><?= htmlspecialchars($subject['units']) ?></td>
-                  <td><?= htmlspecialchars($subject['schedule']) ?></td>
-                  <td><?= htmlspecialchars($subject['instructor']) ?></td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr><td colspan="5" class="text-center">No subjects assigned.</td></tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="text-center mt-4 no-print">
-        <button onclick="window.print()" class="btn btn-success me-2">Print Slip</button>
-      </div>
+    <div class="enrollment-slip" id="enrollmentSlip">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <p><strong>Student Name:</strong> <?= htmlspecialchars($enrollment['studentName']) ?></p>
+      <p><strong>Student ID:</strong> <?= htmlspecialchars($enrollment['studentID']) ?></p>
+    </div>
+    <div class="col-md-6">
+      <p><strong>Program:</strong> <?= htmlspecialchars($enrollment['program']) ?></p>
+      <p><strong>Year Level:</strong> <?= htmlspecialchars($enrollment['yearLevel']) ?></p>
     </div>
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <p><strong>Semester:</strong> <?= htmlspecialchars($enrollment['semester']) ?></p>
+      <p><strong>Section:</strong> <?= htmlspecialchars($enrollment['section']) ?></p>
+    </div>
+    <div class="col-md-6">
+      <p><strong>Date Submitted:</strong> <?= date("F d, Y", strtotime($enrollment['dateSubmitted'])) ?></p>
+      <p><strong>Status:</strong> 
+        <span class="badge bg-success badge-status">
+          <?= htmlspecialchars($enrollment['status']) ?>
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <h5 class="mb-3">Assigned Subjects / Class Schedule</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Subject Code</th>
+          <th>Subject Title</th>
+          <th>Units</th>
+          <th>Schedule</th>
+          <th>Instructor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if (count($subjects) > 0): ?>
+          <?php foreach ($subjects as $subject): ?>
+            <tr>
+              <td><?= htmlspecialchars($subject['code']) ?></td>
+              <td><?= htmlspecialchars($subject['title']) ?></td>
+              <td><?= htmlspecialchars($subject['units']) ?></td>
+              <td><?= htmlspecialchars($subject['schedule']) ?></td>
+              <td><?= htmlspecialchars($subject['instructor']) ?></td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr><td colspan="5" class="text-center">No subjects assigned.</td></tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 text-center">
+    <p><strong>Enrollment No:</strong> ENR-<?= $enrollment_id ?></p>
+    <img src="images/qr/qr_enrollment_<?= $enrollment_id ?>.png" width="120" alt="QR Code" />
+  </div>
+
+  <div class="text-center mt-4 no-print">
+    <button onclick="window.print()" class="btn btn-success me-2">Print Slip</button>
+    <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function downloadPDF() {
+    const element = document.getElementById('enrollmentSlip');
+    html2pdf().set({
+      margin: 1,
+      filename: 'enrollment_slip_ENR-<?= $enrollment_id ?>.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }).from(element).save();
+  }
+</script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['student_logged_in']) || !isset($_SESSION['student_number'])) {
+if (!isset($_SESSION['student_id'])) {
     header("Location: ../logregfor/login.php");
     exit;
 }
@@ -18,15 +18,28 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-$student_number = $_SESSION['student_number'];
+// Fetch student info from session ID
+$student_id = $_SESSION['student_id'];
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+$stmt->execute([$student_id]);
+$student = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Fetch enrollment status for logged-in student
+if (!$student) {
+    session_destroy();
+    header("Location: ../logregfor/login.php");
+    exit;
+}
+
+$student_number = $student['student_number'];
+$_SESSION['student_number'] = $student_number;
+$_SESSION['student_logged_in'] = true;
+
+// Fetch enrollment status
 $stmt = $pdo->prepare("SELECT * FROM enrollment_status WHERE student_number = ? ORDER BY date_submitted DESC LIMIT 1");
 $stmt->execute([$student_number]);
 $enrollment = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$enrollment) {
-    // No enrollment found, set defaults or redirect
     $enrollment = [
         'program' => 'N/A',
         'year_level' => 'N/A',
@@ -39,19 +52,17 @@ if (!$enrollment) {
     ];
 }
 
-// Format date for display
 $dateSubmitted = $enrollment['date_submitted'] ? date("F j, Y", strtotime($enrollment['date_submitted'])) : 'N/A';
 
 $status = $enrollment['status'];
 
 $badgeClass = [
-  'pending' => 'badge-pending',
-  'approved' => 'badge-approved',
-  'rejected' => 'badge-rejected'
+    'pending' => 'badge-pending',
+    'approved' => 'badge-approved',
+    'rejected' => 'badge-rejected'
 ][$status] ?? 'badge-pending';
 
 $badgeLabel = ucfirst($status);
-
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +114,7 @@ $badgeLabel = ucfirst($status);
 <body>
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand" href="/student/student-dashboard.php">
+      <a class="navbar-brand" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
         Student Dashboard
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
@@ -112,13 +123,14 @@ $badgeLabel = ucfirst($status);
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/student/student-dashboard.php" class="btn btn-outline-secondary mb-3">
+          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
           <i class="bi bi-arrow-left"></i> Back to Dashboard
           </a></li>
         </ul>
       </div>
     </div>
   </nav>
+
   <div class="container my-5">
     <h2 class="text-success mb-4 fw-bold">
       Current Enrollment Status

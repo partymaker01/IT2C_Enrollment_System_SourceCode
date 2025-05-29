@@ -1,18 +1,17 @@
 <?php
 session_start();
-include 'db.php';
+include '../../db.php';
 
-// For demo, hardcoded user_id, replace with your session user id.
 $user_id = $_SESSION['user_id'] ?? 1;
 
 function getBadgeClass($status) {
-  switch ($status) {
-    case 'Uploaded': return 'badge-uploaded';
-    case 'Verified': return 'badge-verified';
-    case 'Rejected': return 'badge-rejected';
-    case 'Pending':  return 'badge-pending';
-    default:         return 'bg-secondary';
-  }
+    switch ($status) {
+        case 'Uploaded': return 'badge-uploaded';
+        case 'Verified': return 'badge-verified';
+        case 'Rejected': return 'badge-rejected';
+        case 'Pending':  return 'badge-pending';
+        default:         return 'bg-secondary';
+    }
 }
 
 $message = '';
@@ -34,36 +33,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($file['size'] > $max_size) {
             $message = "File too large. Max size is 5MB.";
         } else {
-            // Create uploads folder if not exist
             $upload_dir = __DIR__ . '/uploads/' . $user_id;
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
 
-            // Generate unique filename
             $new_filename = uniqid() . '.' . $file_ext;
             $target_path = $upload_dir . '/' . $new_filename;
 
             if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                // Save to DB
-                $stmt = $conn->prepare("INSERT INTO uploaded_documents (user_id, document_type, filename, status, remarks, reupload) VALUES (?, ?, ?, 'Uploaded', 'Waiting for verification', 0)");
-                $stmt->bind_param("iss", $user_id, $document_type, $new_filename);
-                $stmt->execute();
-                $message = "Document uploaded successfully.";
+            $stmt = $conn->prepare("INSERT INTO uploaded_documents (student_id, document_name, file_path, status, remarks) VALUES (?, ?, ?, 'Uploaded', 'Waiting for verification')");
+            $stmt->bind_param("iss", $user_id, $document_type, $new_filename);
+            $stmt->execute();
+            $stmt->close();
+
+            // File preview logic
+            $relative_path = 'uploads/' . $user_id . '/' . $new_filename;
+            $fileType = mime_content_type($target_path);
+            $preview = "<h5 class='mt-3'>File Preview:</h5>";
+
+            if (strpos($fileType, "image") !== false) {
+                $preview .= "<img src='$relative_path' style='max-width: 400px;' class='img-thumbnail'>";
+            } elseif ($fileType == "application/pdf") {
+                $preview .= "<embed src='$relative_path' type='application/pdf' width='100%' height='500px'>";
+            } else {
+                $preview .= "<p>File uploaded: <a href='$relative_path' target='_blank'>Download</a></p>";
+            }
+
+            $message = "Document uploaded successfully.<br>" . $preview;
             } else {
                 $message = "Failed to move uploaded file.";
             }
+
         }
     }
 }
 
-// Fetch documents from DB
-$stmt = $conn->prepare("SELECT * FROM uploaded_documents WHERE user_id = ? ORDER BY upload_date DESC");
+$uploadedDocuments = [];
+$stmt = $conn->prepare("SELECT document_name, file_path, upload_date, status, remarks FROM uploaded_documents WHERE student_id = ? ORDER BY upload_date DESC");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 $uploadedDocuments = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -73,7 +86,7 @@ $uploadedDocuments = $result->fetch_all(MYSQLI_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Upload Requirements - Enrollment System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" type="image/x-icon">
   <style>
     body { background-color: #e8f5e9; }
     .navbar { background-color: #2e7d32; }
@@ -87,10 +100,22 @@ $uploadedDocuments = $result->fetch_all(MYSQLI_ASSOC);
 </head>
 <body>
 <nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">Student Dashboard</a>
-  </div>
-</nav>
+    <div class="container">
+      <a class="navbar-brand" href="/IT2C_Enrollment_System_SourceCode/student//student-dashboard.php">
+        Student Dashboard
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student//student-dashboard.php" class="btn btn-outline-secondary mb-3">
+          <i class="bi bi-arrow-left"></i> Back to Dashboard
+          </a>
+        </ul>
+      </div>
+    </div>
+  </nav>
 <div class="container my-5">
   <h2 class="text-success mb-4">Upload Requirements</h2>
 
@@ -142,18 +167,18 @@ $uploadedDocuments = $result->fetch_all(MYSQLI_ASSOC);
         <?php if (!empty($uploadedDocuments)): ?>
           <?php foreach ($uploadedDocuments as $doc): ?>
           <tr>
-            <td><?= htmlspecialchars($doc['document_type']) ?></td>
+            <td><?= htmlspecialchars($doc['document_name']) ?></td>
             <td>
-              <a href="uploads/<?= $user_id ?>/<?= htmlspecialchars($doc['filename']) ?>" target="_blank">
-                <?= htmlspecialchars($doc['filename']) ?>
+              <a href="uploads/<?= $user_id ?>/<?= htmlspecialchars($doc['file_path']) ?>" target="_blank">
+                <?= htmlspecialchars($doc['file_path']) ?>
               </a>
             </td>
             <td><?= date('M d, Y', strtotime($doc['upload_date'])) ?></td>
             <td><span class="badge <?= getBadgeClass($doc['status']) ?>"><?= htmlspecialchars($doc['status']) ?></span></td>
             <td><?= htmlspecialchars($doc['remarks']) ?></td>
             <td>
-              <button class="btn btn-sm btn-outline-primary" <?= $doc['reupload'] ? '' : 'disabled' ?>>Re-upload</button>
-              <a href="uploads/<?= $user_id ?>/<?= htmlspecialchars($doc['filename']) ?>" target="_blank" class="btn btn-sm btn-outline-secondary">View</a>
+              <button class="btn btn-sm btn-outline-primary" disabled>Re-upload</button>
+              <a href="uploads/<?= $user_id ?>/<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-secondary">View</a>
             </td>
           </tr>
           <?php endforeach; ?>

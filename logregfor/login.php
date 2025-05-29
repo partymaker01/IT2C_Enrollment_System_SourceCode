@@ -2,11 +2,6 @@
 session_start();
 include '../db.php';
 
-if (isset($_SESSION['student_id'])) {
-    header("Location: ../student/student-dashboard.php");
-    exit;
-}
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -17,120 +12,69 @@ require '../PHPMailer/src/SMTP.php';
 $message = "";
 $alert_type = "info";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['form_action'] ?? '';
+// ✅ Define $action to prevent undefined variable warning
+$action = $_POST['form_action'] ?? '';
 
-    if ($action === 'login') {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $account_type = $_POST['account_type'] ?? '';
+if ($action === 'login') {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $account_type = $_POST['account_type'] ?? '';
 
-        if (!$username || !$password || !$account_type) {
-            $message = "Please fill all the fields.";
-            $alert_type = "warning";
-        } else {
-            if ($account_type === "admin") {
-                $stmt = $conn->prepare("SELECT * FROM admin_settings WHERE email = ?");
-                $stmt->bind_param("s", $username);
-            } elseif ($account_type === "student") {
-                $stmt = $conn->prepare("SELECT * FROM students WHERE username = ?");
-                $stmt->bind_param("s", $username);
-            } else {
-                $message = "Invalid account type.";
-                $alert_type = "error";
-            }
+    if (!$username || !$password || !$account_type) {
+        $message = "Please fill all the fields.";
+        $alert_type = "warning";
+    } else {
+        if ($account_type === "admin") {
+            $stmt = $conn->prepare("SELECT * FROM admin_settings WHERE email = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-            if (empty($message)) {
-                $stmt->execute();
-                $result = $stmt->get_result();
+            if ($result->num_rows === 1) {
+                $admin = $result->fetch_assoc();
 
-                if ($result->num_rows === 1) {
-                    $user = $result->fetch_assoc();
-
-                    if ($account_type === 'student' && $user['is_verified'] != 1) {
-                        $message = "Please verify your email first.";
-                        $alert_type = "warning";
-                    } elseif (password_verify($password, $user['password'])) {
-                        $_SESSION['role'] = $account_type;
-                        if ($account_type === "admin") {
-                            $_SESSION['admin_email'] = $user['email'];
-                            header("Location: ../admin/dashboard.php");
-                        } else {
-                        $_SESSION['student_id'] = $user['id'];
-                        $_SESSION['student_username'] = $user['username'];
-                        $_SESSION['student_number'] = $user['student_number'];
-                            header("Location: ../student/student-dashboard.php");
-                        }
-                        exit;
-                    } else {
-                        $message = "Incorrect password.";
-                        $alert_type = "error";
-                    }
+                if (password_verify($password, $admin['password'])) {
+                    $_SESSION['admin_id'] = $admin['id'];
+                    $_SESSION['admin_email'] = $admin['email'];
+                    $_SESSION['role'] = "admin";
+                    header("Location: ../admin/dashboard.php");
+                    exit;
                 } else {
-                    $message = "User not found.";
+                    $message = "Incorrect password.";
                     $alert_type = "error";
                 }
-            }
-        }
-    }
-
-    if ($action === 'register') {
-        $username = trim($_POST['username'] ?? '');
-        $first_name = trim($_POST['first_name'] ?? '');
-        $middle_name = trim($_POST['middle_name'] ?? '');
-        $last_name = trim($_POST['last_name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $raw_password = trim($_POST['password'] ?? '');
-
-        if ($username && $first_name && $middle_name && $last_name && $email && $raw_password) {
-            $password = password_hash($raw_password, PASSWORD_DEFAULT);
-            $verification_code = bin2hex(random_bytes(16));
-
-            $check = $conn->prepare("SELECT id FROM students WHERE email = ? OR username = ?");
-            $check->bind_param("ss", $email, $username);
-            $check->execute();
-            $result = $check->get_result();
-
-            if ($result->num_rows > 0) {
-                $message = "Username or Email already exists.";
-                $alert_type = "error";
             } else {
-                $stmt = $conn->prepare("INSERT INTO students (username, first_name, middle_name, last_name, email, password, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssss", $username, $first_name, $middle_name, $last_name, $email, $password, $verification_code);
+                $message = "Admin account not found.";
+                $alert_type = "error";
+            }
+        } elseif ($account_type === "student") {
+            $stmt = $conn->prepare("SELECT * FROM students WHERE username = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-                if ($stmt->execute()) {
-                    $mail = new PHPMailer(true);
-                    try {
-                        $mail->isSMTP();
-                        $mail->Host = 'smtp.gmail.com';
-                        $mail->SMTPAuth = true;
-                        $mail->Username = 'jerickreyes982@gmail.com';
-                        $mail->Password = 'efjbmtwsnvleklgb';
-                        $mail->SMTPSecure = 'tls';
-                        $mail->Port = 587;
-                        $mail->setFrom('jerickreyes982@gmail.com', 'Enrollment System');
-                        $mail->addAddress($email, $first_name);
-                        $mail->isHTML(true);
-                        $mail->Subject = 'Email Verification';
-                        $mail->Body = "Hi $first_name,<br><br>Click the link to verify your account:<br><a href='http://localhost/IT2C_Enrollment_System_SourceCode/verify.php?code=$verification_code'>Verify Email</a>";
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
 
-                        $mail->send();
-                        header("Location: login.php?registered=1");
-                        exit;
-                    } catch (Exception $e) {
-                        $message = "Mailer Error: {$mail->ErrorInfo}";
-                        $alert_type = "error";
-                    }
+                if ($user['is_verified'] != 1) {
+                    $message = "Please verify your email first.";
+                    $alert_type = "warning";
+                } elseif (password_verify($password, $user['password'])) {
+                    $_SESSION['student_id'] = $user['id'];
+                    $_SESSION['student_username'] = $user['username'];
+                    $_SESSION['student_number'] = $user['student_number'];
+                    $_SESSION['student_logged_in'] = true;
+                    $_SESSION['role'] = "student";
+                    header("Location: ../student/student-dashboard.php");
+                    exit;
                 } else {
-                    $message = "Registration failed.";
+                    $message = "Incorrect password.";
                     $alert_type = "error";
                 }
-                $stmt->close();
+            } else {
+                $message = "Account not found.";
+                $alert_type = "error";
             }
-            $check->close();
-        } else {
-            $message = "Please fill out all required fields.";
-            $alert_type = "warning";
         }
     }
 }
