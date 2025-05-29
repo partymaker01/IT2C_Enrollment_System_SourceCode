@@ -1,11 +1,12 @@
 <?php
-include 'db.php';
+include '../db.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
+require '../PHPMailer/src/Exception.php';
+require '../PHPMailer/src/PHPMailer.php';
+require '../PHPMailer/src/SMTP.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
@@ -27,12 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'youremail@gmail.com'; // Palitan ng email mo
-            $mail->Password = 'your_app_password';   // Palitan ng app password mo
+            $mail->Username = 'jerickreyes982@gmail.com'; // Replace with your email
+            $mail->Password = 'efjbmtwsnvleklgb';   // Replace with your app password
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            $mail->setFrom('youremail@gmail.com', 'Enrollment System');
+            $mail->setFrom('jerickreyes982@gmail.com', 'Enrollment System');
             $mail->addAddress($email);
 
             $mail->isHTML(true);
