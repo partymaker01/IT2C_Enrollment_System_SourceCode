@@ -2,59 +2,42 @@
 $pdo = new PDO("mysql:host=localhost;dbname=enrollment_system", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Handle Add or Edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['edit_id'] ?? null;
-    $student_id = $_POST['student_id'] ?? '';
-    $first_name = $_POST['first_name'] ?? '';
-    $middle_name = $_POST['middle_name'] ?? '';
-    $last_name = $_POST['last_name'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $program = $_POST['program'] ?? '';
-    $year_level = $_POST['year_level'] ?? '';
-    $status = $_POST['status'] ?? '';
+    $student_id = $_POST['student_id'];
+    $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $program = $_POST['program'];
+    $year_level = $_POST['year_level'];
+    $status = $_POST['status'];
 
-    if ($student_id && $first_name && $last_name && $email && $program && $year_level && $status) {
-        if ($id) {
-            $stmt = $pdo->prepare("UPDATE students SET student_id=:student_id, first_name=:first_name, middle_name=:middle_name, last_name=:last_name, email=:email, program=:program, year_level=:year_level, status=:status WHERE id=:id");
-            $stmt->bindParam(':id', $id);
-        } else {
-            $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, middle_name, last_name, email, program, year_level, status) VALUES (:student_id, :first_name, :middle_name, :last_name, :email, :program, :year_level, :status)");
-        }
-
-        $stmt->bindParam(':student_id', $student_id);
-        $stmt->bindParam(':first_name', $first_name);
-        $stmt->bindParam(':middle_name', $middle_name);
-        $stmt->bindParam(':last_name', $last_name);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':program', $program);
-        $stmt->bindParam(':year_level', $year_level);
-        $stmt->bindParam(':status', $status);
-        $stmt->execute();
-
-        header("Location: manage-students-account.php");
-        exit();
+    if ($id) {
+        // Update
+        $stmt = $pdo->prepare("UPDATE students SET student_id=?, first_name=?, middle_name=?, last_name=?, email=?, program=?, year_level=?, status=? WHERE id=?");
+        $stmt->execute([$student_id, $first_name, $middle_name, $last_name, $email, $program, $year_level, $status, $id]);
+    } else {
+        // Insert
+        $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, middle_name, last_name, email, program, year_level, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$student_id, $first_name, $middle_name, $last_name, $email, $program, $year_level, $status]);
     }
-}
-
-$stmt = $pdo->prepare("SELECT * FROM students");
-$stmt->execute();
-$studentList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$studentToEdit = null;
-if (isset($_GET['edit_id'])) {
-    $editStmt = $pdo->prepare("SELECT * FROM students WHERE id = :id");
-    $editStmt->bindParam(':id', $_GET['edit_id']);
-    $editStmt->execute();
-    $studentToEdit = $editStmt->fetch(PDO::FETCH_ASSOC);
-}
-
-if (isset($_GET['delete_id'])) {
-    $deleteStmt = $pdo->prepare("DELETE FROM students WHERE id = :id");
-    $deleteStmt->bindParam(':id', $_GET['delete_id']);
-    $deleteStmt->execute();
     header("Location: manage-students-account.php");
     exit();
 }
+
+// Handle Delete
+if (isset($_GET['delete_id'])) {
+    $stmt = $pdo->prepare("DELETE FROM students WHERE id = ?");
+    $stmt->execute([$_GET['delete_id']]);
+    header("Location: manage-students-account.php");
+    exit();
+}
+
+// Fetch all students
+$stmt = $pdo->query("SELECT * FROM students");
+$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +94,7 @@ if (isset($_GET['delete_id'])) {
     }
   </style>
 </head>
-<body>
+<body class="bg-light">
   <nav class="navbar navbar-expand-lg navbar-dark bg-success py-3">
   <div class="container-fluid">
     <a class="navbar-brand d-flex align-items-center" href="#">
@@ -131,8 +114,8 @@ if (isset($_GET['delete_id'])) {
     </div>
   </nav>
 
-  <div class="container">
-    <h2 class="text-success text-center">Manage Student Accounts</h2>
+  <div class="container my-5">
+    <h2 class="text-center text-success mb-4">Manage Student Accounts</h2>
 
     <div class="d-flex justify-content-end mb-4">
       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addStudentModal">
@@ -140,39 +123,33 @@ if (isset($_GET['delete_id'])) {
       </button>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle mb-0">
-        <thead class="table-success text-center">
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-success">
+        <tr>
+          <th>No</th>
+          <th>Student ID</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Program</th>
+          <th>Year</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($studentList as $s): ?>
           <tr>
-            <th>NO.</th>
-            <th>Student ID</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Program</th>
-            <th>Year</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($studentList as $s): ?>
-          <tr>
-            <td class="text-center"><?= $s['id'] ?></td>
+            <td><?= $s['id'] ?></td>
             <td><?= htmlspecialchars($s['student_id']) ?></td>
-            <td><?= htmlspecialchars($s['first_name'] . ' ' . $s['middle_name'] . ' ' . $s['last_name']) ?></td>
+            <td><?= htmlspecialchars("{$s['first_name']} {$s['middle_name']} {$s['last_name']}") ?></td>
             <td><?= htmlspecialchars($s['email']) ?></td>
             <td><?= htmlspecialchars($s['program']) ?></td>
             <td><?= htmlspecialchars($s['year_level']) ?></td>
-            <td class="text-center">
-              <span class="badge <?= strtolower($s['status']) === 'active' ? 'bg-success' : 'bg-secondary' ?>">
-                <?= htmlspecialchars($s['status']) ?>
-              </span>
-            </td>
-            <td class="text-center">
-              <a href="?edit_id=<?= $s['id'] ?>" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-              <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $s['id'] ?>)">
-                <i class="bi bi-trash"></i>
-              </button>
+            <td><span class="badge <?= strtolower($s['status']) === 'active' ? 'bg-success' : 'bg-secondary' ?>">
+              <?= $s['status'] ?></span></td>
+            <td>
+              <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $s['id'] ?>"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $s['id'] ?>)"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
           <?php endforeach; ?>
@@ -180,6 +157,25 @@ if (isset($_GET['delete_id'])) {
       </table>
     </div>
   </div>
+
+  <div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form method="POST">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">Add Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <?php $studentToEdit = []; include 'student-form-fields.php'; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+      </div>
+
 
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
@@ -247,30 +243,70 @@ if (isset($_GET['delete_id'])) {
   </div>
 </div>
 
+
+<div class="mb-3"><label class="form-label">Student ID</label>
+<input type="text" name="student_id" class="form-control" required value="<?= field('student_id') ?>"></div>
+
+<div class="mb-3"><label class="form-label">First Name</label>
+<input type="text" name="first_name" class="form-control" required value="<?= field('first_name') ?>"></div>
+
+<div class="mb-3"><label class="form-label">Middle Name</label>
+<input type="text" name="middle_name" class="form-control" value="<?= field('middle_name') ?>"></div>
+
+<div class="mb-3"><label class="form-label">Last Name</label>
+<input type="text" name="last_name" class="form-control" required value="<?= field('last_name') ?>"></div>
+
+<div class="mb-3"><label class="form-label">Email</label>
+<input type="email" name="email" class="form-control" required value="<?= field('email') ?>"></div>
+
+<div class="mb-3"><label class="form-label">Program</label>
+<select name="program" class="form-select" required>
+  <option disabled>Select Program</option>
+  <?php foreach (['IT','HRMT','ECT','HST'] as $prog): ?>
+    <option value="<?= $prog ?>" <?= field('program') === $prog ? 'selected' : '' ?>><?= $prog ?></option>
+  <?php endforeach; ?>
+</select></div>
+
+<div class="mb-3"><label class="form-label">Year Level</label>
+<select name="year_level" class="form-select" required>
+  <option disabled>Select Year</option>
+  <?php foreach (['1st Year','2nd Year','3rd Year'] as $year): ?>
+    <option value="<?= $year ?>" <?= field('year_level') === $year ? 'selected' : '' ?>><?= $year ?></option>
+  <?php endforeach; ?>
+</select></div>
+
+<div class="mb-3"><label class="form-label">Status</label>
+<select name="status" class="form-select" required>
+  <option disabled>Select Status</option>
+  <?php foreach (['Active','Inactive'] as $stat): ?>
+    <option value="<?= $stat ?>" <?= field('status') === $stat ? 'selected' : '' ?>><?= $stat ?></option>
+  <?php endforeach; ?>
+</select></div>
+
   <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+   <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header confirm-delete">
-          <h5 class="modal-title" id="confirmDeleteLabel">Confirm Delete</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           Are you sure you want to delete this student?
         </div>
         <div class="modal-footer">
+          <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Yes, Delete</a>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a id="confirmDeleteBtn" href="#" class="btn btn-delete-confirm">Yes, Delete</a>
         </div>
       </div>
     </div>
   </div>
 
+
   <script>
-    function confirmDelete(id) {
-      const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-      document.getElementById('confirmDeleteBtn').href = "?delete_id=" + id;
-      deleteModal.show();
+ function confirmDelete(id) {
+      document.getElementById('confirmDeleteBtn').href = '?delete_id=' + id;
+      new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
     }
 
     (() => {
@@ -294,5 +330,15 @@ if (isset($_GET['delete_id'])) {
       modal.show();
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit_id');
+
+  if (editId) {
+    const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+    editModal.show();
+  }
+});
   </script>
 </body>

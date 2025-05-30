@@ -2,6 +2,7 @@
 $pdo = new PDO("mysql:host=localhost;dbname=enrollment_system", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['edit_id'] ?? null;
     $student_id = $_POST['student_id'] ?? '';
@@ -15,9 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($student_id && $first_name && $last_name && $email && $program && $year_level && $status) {
         if ($id) {
+            // Update
             $stmt = $pdo->prepare("UPDATE students SET student_id=:student_id, first_name=:first_name, middle_name=:middle_name, last_name=:last_name, email=:email, program=:program, year_level=:year_level, status=:status WHERE id=:id");
             $stmt->bindParam(':id', $id);
         } else {
+            // Insert
             $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, middle_name, last_name, email, program, year_level, status) VALUES (:student_id, :first_name, :middle_name, :last_name, :email, :program, :year_level, :status)");
         }
 
@@ -36,25 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = $pdo->prepare("SELECT * FROM students");
-$stmt->execute();
-$studentList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$studentToEdit = null;
-if (isset($_GET['edit_id'])) {
-    $editStmt = $pdo->prepare("SELECT * FROM students WHERE id = :id");
-    $editStmt->bindParam(':id', $_GET['edit_id']);
-    $editStmt->execute();
-    $studentToEdit = $editStmt->fetch(PDO::FETCH_ASSOC);
-}
-
+// Delete student
 if (isset($_GET['delete_id'])) {
-    $deleteStmt = $pdo->prepare("DELETE FROM students WHERE id = :id");
-    $deleteStmt->bindParam(':id', $_GET['delete_id']);
-    $deleteStmt->execute();
+    $stmt = $pdo->prepare("DELETE FROM students WHERE id = :id");
+    $stmt->bindParam(':id', $_GET['delete_id']);
+    $stmt->execute();
     header("Location: manage-students-account.php");
     exit();
 }
+
+// Get all students
+$stmt = $pdo->prepare("SELECT * FROM students");
+$stmt->execute();
+$studentList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -181,6 +178,7 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
+
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
@@ -294,5 +292,15 @@ if (isset($_GET['delete_id'])) {
       modal.show();
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit_id');
+
+  if (editId) {
+    const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+    editModal.show();
+  }
+});
   </script>
 </body>

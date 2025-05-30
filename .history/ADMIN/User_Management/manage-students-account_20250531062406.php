@@ -134,11 +134,11 @@ if (isset($_GET['delete_id'])) {
   <div class="container">
     <h2 class="text-success text-center">Manage Student Accounts</h2>
 
-    <div class="d-flex justify-content-end mb-4">
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-        <i class="bi bi-plus-circle me-1"></i> Add Student
-      </button>
-    </div>
+   <div class="text-end mb-3">
+  <a href="manage-students-account.php" class="btn btn-success">
+    <i class="bi bi-plus-circle"></i> Add Student
+  </a>
+</div>
 
     <div class="table-responsive">
       <table class="table table-bordered table-striped align-middle mb-0">
@@ -181,71 +181,76 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+<!-- Edit/Add Modal -->
+<?php if (isset($_GET['edit_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST'): ?>
+<div class="modal fade show" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" style="display:block; background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
       <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title"><?= $studentToEdit ? 'Edit Student' : 'Add Student' ?></h5>
+        <a href="manage-students-account.php" class="btn-close btn-close-white"></a>
       </div>
-      <form method="POST" class="needs-validation" novalidate>
+      <form method="POST">
+        <?php if ($studentToEdit): ?>
+        <input type="hidden" name="edit_id" value="<?= $studentToEdit['id'] ?>">
+        <?php endif; ?>
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Student ID</label>
-            <input type="text" name="student_id" class="form-control" required>
+            <input type="text" name="student_id" class="form-control" required value="<?= $studentToEdit['student_id'] ?? '' ?>">
           </div>
           <div class="mb-3">
             <label class="form-label">First Name</label>
-            <input type="text" name="first_name" class="form-control" required>
+            <input type="text" name="first_name" class="form-control" required value="<?= $studentToEdit['first_name'] ?? '' ?>">
           </div>
           <div class="mb-3">
             <label class="form-label">Middle Name</label>
-            <input type="text" name="middle_name" class="form-control">
+            <input type="text" name="middle_name" class="form-control" value="<?= $studentToEdit['middle_name'] ?? '' ?>">
           </div>
           <div class="mb-3">
             <label class="form-label">Last Name</label>
-            <input type="text" name="last_name" class="form-control" required>
+            <input type="text" name="last_name" class="form-control" required value="<?= $studentToEdit['last_name'] ?? '' ?>">
           </div>
           <div class="mb-3">
             <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" required value="<?= $studentToEdit['email'] ?? '' ?>">
           </div>
           <div class="mb-3">
             <label class="form-label">Program</label>
             <select name="program" class="form-select" required>
               <option disabled selected>Select Program</option>
-              <option value="IT">IT</option>
-              <option value="HRMT">HRMT</option>
-              <option value="ECT">ECT</option>
-              <option value="HST">HST</option>
+              <?php $programs = ['IT', 'HRMT', 'ECT', 'HST']; foreach ($programs as $p): ?>
+                <option value="<?= $p ?>" <?= ($studentToEdit['program'] ?? '') === $p ? 'selected' : '' ?>><?= $p ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Year Level</label>
             <select name="year_level" class="form-select" required>
               <option disabled selected>Select Year</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
+              <?php $years = ['1st Year', '2nd Year', '3rd Year']; foreach ($years as $y): ?>
+                <option value="<?= $y ?>" <?= ($studentToEdit['year_level'] ?? '') === $y ? 'selected' : '' ?>><?= $y ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Status</label>
             <select name="status" class="form-select" required>
               <option disabled selected>Select Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="Active" <?= ($studentToEdit['status'] ?? '') === 'Active' ? 'selected' : '' ?>>Active</option>
+              <option value="Inactive" <?= ($studentToEdit['status'] ?? '') === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Add Student</button>
+          <a href="manage-students-account.php" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-success"><?= $studentToEdit ? 'Update Student' : 'Add Student' ?></button>
         </div>
       </form>
     </div>
   </div>
 </div>
+<?php endif; ?>
 
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">

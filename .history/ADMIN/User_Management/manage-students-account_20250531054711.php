@@ -112,22 +112,12 @@ if (isset($_GET['delete_id'])) {
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-success py-3">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
-      Admin Panel
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/ADMIN/admin-dashboard.php" class="btn btn-outline-secondary mb-3">
-          <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-      </ul>
-      </div>
+  <nav class="navbar navbar-expand-lg navbar-dark py-3">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
+        Admin Panel
+      </a>
     </div>
   </nav>
 
@@ -181,71 +171,73 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <!-- Edit/Add Modal -->
+  <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-header edit-mode">
+          <h5 class="modal-title" id="addStudentModalLabel"><?= $studentToEdit ? 'Edit Student' : 'Add Student' ?></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form method="POST" class="needs-validation" novalidate>
+          <?php if ($studentToEdit): ?>
+            <input type="hidden" name="edit_id" value="<?= $studentToEdit['id'] ?>">
+          <?php endif; ?>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Student ID</label>
+              <input type="text" name="student_id" class="form-control" required value="<?= $studentToEdit['student_id'] ?? '' ?>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-control" required value="<?= $studentToEdit['first_name'] ?? '' ?>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Middle Name</label>
+              <input type="text" name="middle_name" class="form-control" value="<?= $studentToEdit['middle_name'] ?? '' ?>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" required value="<?= $studentToEdit['last_name'] ?? '' ?>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required value="<?= $studentToEdit['email'] ?? '' ?>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Program</label>
+              <select name="program" class="form-select" required>
+                <option disabled>Select Program</option>
+                <?php foreach (['IT', 'HRMT', 'ECT', 'HST'] as $p): ?>
+                  <option value="<?= $p ?>" <?= ($studentToEdit['program'] ?? '') === $p ? 'selected' : '' ?>><?= $p ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Year Level</label>
+              <select name="year_level" class="form-select" required>
+                <option disabled>Select Year</option>
+                <?php foreach (['1st Year', '2nd Year', '3rd Year'] as $y): ?>
+                  <option value="<?= $y ?>" <?= ($studentToEdit['year_level'] ?? '') === $y ? 'selected' : '' ?>><?= $y ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select" required>
+                <option disabled>Select Status</option>
+                <option value="Active" <?= ($studentToEdit['status'] ?? '') === 'Active' ? 'selected' : '' ?>>Active</option>
+                <option value="Inactive" <?= ($studentToEdit['status'] ?? '') === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-warning">Save</button>
+          </div>
+        </form>
       </div>
-      <form method="POST" class="needs-validation" novalidate>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Student ID</label>
-            <input type="text" name="student_id" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">First Name</label>
-            <input type="text" name="first_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Middle Name</label>
-            <input type="text" name="middle_name" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Last Name</label>
-            <input type="text" name="last_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Program</label>
-            <select name="program" class="form-select" required>
-              <option disabled selected>Select Program</option>
-              <option value="IT">IT</option>
-              <option value="HRMT">HRMT</option>
-              <option value="ECT">ECT</option>
-              <option value="HST">HST</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Year Level</label>
-            <select name="year_level" class="form-select" required>
-              <option disabled selected>Select Year</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-select" required>
-              <option disabled selected>Select Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Add Student</button>
-        </div>
-      </form>
     </div>
   </div>
-</div>
 
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
@@ -286,13 +278,5 @@ if (isset($_GET['delete_id'])) {
         });
       });
     })();
-
-      document.addEventListener('DOMContentLoaded', () => {
-    const url = new URL(window.location.href);
-    if (url.searchParams.get('edit_id')) {
-      const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
-      modal.show();
-    }
-  });
   </script>
 </body>

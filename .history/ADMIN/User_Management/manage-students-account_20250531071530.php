@@ -181,71 +181,66 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+
+<!-- Edit Student Modal -->
+<div class="modal fade" id="editStudentModal<?= $s['id'] ?>" tabindex="-1" aria-labelledby="editStudentModalLabel<?= $s['id'] ?>" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <form method="POST" class="needs-validation" novalidate>
+      <form method="POST">
+        <input type="hidden" name="edit_id" value="<?= $s['id'] ?>">
+        <div class="modal-header bg-warning text-white">
+          <h5 class="modal-title" id="editStudentModalLabel<?= $s['id'] ?>">Edit Student</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
         <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Student ID</label>
-            <input type="text" name="student_id" class="form-control" required>
+          <div class="mb-3"><label class="form-label">Student ID</label>
+            <input type="text" name="student_id" class="form-control" required value="<?= htmlspecialchars($s['student_id']) ?>">
           </div>
-          <div class="mb-3">
-            <label class="form-label">First Name</label>
-            <input type="text" name="first_name" class="form-control" required>
+          <div class="mb-3"><label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" required value="<?= htmlspecialchars($s['first_name']) ?>">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Middle Name</label>
-            <input type="text" name="middle_name" class="form-control">
+          <div class="mb-3"><label class="form-label">Middle Name</label>
+            <input type="text" name="middle_name" class="form-control" value="<?= htmlspecialchars($s['middle_name']) ?>">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Last Name</label>
-            <input type="text" name="last_name" class="form-control" required>
+          <div class="mb-3"><label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" required value="<?= htmlspecialchars($s['last_name']) ?>">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
+          <div class="mb-3"><label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($s['email']) ?>">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Program</label>
+          <div class="mb-3"><label class="form-label">Program</label>
             <select name="program" class="form-select" required>
-              <option disabled selected>Select Program</option>
-              <option value="IT">IT</option>
-              <option value="HRMT">HRMT</option>
-              <option value="ECT">ECT</option>
-              <option value="HST">HST</option>
+              <?php foreach (['IT','HRMT','ECT','HST'] as $p): ?>
+                <option value="<?= $p ?>" <?= $s['program'] === $p ? 'selected' : '' ?>><?= $p ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Year Level</label>
+          <div class="mb-3"><label class="form-label">Year Level</label>
             <select name="year_level" class="form-select" required>
-              <option disabled selected>Select Year</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
+              <?php foreach (['1st Year','2nd Year','3rd Year'] as $y): ?>
+                <option value="<?= $y ?>" <?= $s['year_level'] === $y ? 'selected' : '' ?>><?= $y ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Status</label>
+          <div class="mb-3"><label class="form-label">Status</label>
             <select name="status" class="form-select" required>
-              <option disabled selected>Select Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="Active" <?= $s['status'] === 'Active' ? 'selected' : '' ?>>Active</option>
+              <option value="Inactive" <?= $s['status'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Add Student</button>
+          <button type="submit" class="btn btn-warning">Update</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal<?= $s['id'] ?>">
+  <i class="bi bi-pencil"></i>
+</button>
 
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
@@ -294,5 +289,15 @@ if (isset($_GET['delete_id'])) {
       modal.show();
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit_id');
+
+  if (editId) {
+    const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+    editModal.show();
+  }
+});
   </script>
 </body>

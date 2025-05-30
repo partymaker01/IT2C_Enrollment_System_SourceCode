@@ -41,9 +41,9 @@ $stmt->execute();
 $studentList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $studentToEdit = null;
-if (isset($_GET['edit_id'])) {
+if (isset($_GET['add_id'])) {
     $editStmt = $pdo->prepare("SELECT * FROM students WHERE id = :id");
-    $editStmt->bindParam(':id', $_GET['edit_id']);
+    $editStmt->bindParam(':id', $_GET['add_id']);
     $editStmt->execute();
     $studentToEdit = $editStmt->fetch(PDO::FETCH_ASSOC);
 }

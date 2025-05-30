@@ -181,6 +181,7 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
+
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
@@ -294,5 +295,15 @@ if (isset($_GET['delete_id'])) {
       modal.show();
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit_id');
+
+  if (editId) {
+    const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+    editModal.show();
+  }
+});
   </script>
 </body>

@@ -2,8 +2,8 @@
 // Database config (edit to your own)
 $host = 'localhost';
 $db   = 'enrollment_system';
-$user = 'root';
-$pass = '';
+$user = 'your_db_username';
+$pass = 'your_db_password';
 $charset = 'utf8mb4';
 
 // Create connection with PDO (better security and flexibility)

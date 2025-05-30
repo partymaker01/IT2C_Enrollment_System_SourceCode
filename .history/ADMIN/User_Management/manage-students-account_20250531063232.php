@@ -181,6 +181,8 @@ if (isset($_GET['delete_id'])) {
     </div>
   </div>
 
+
+<!-- ADD STUDENT MODAL -->
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
