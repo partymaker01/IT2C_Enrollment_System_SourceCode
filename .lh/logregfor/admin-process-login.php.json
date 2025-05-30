@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 13,
             "patches": [
                 {
                     "date": 1748603049545,
@@ -12,6 +12,54 @@
                 {
                     "date": 1748603836865,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,10 +2,10 @@\n session_start();\r\n include '../db.php';\r\n \r\n if ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n-    $username = trim($_POST['username'] ?? '');\r\n-    $password = trim($_POST['password'] ?? '');\r\n+    $username = $_POST['username'] ?? '';\r\n+    $password = $_POST['password'] ?? '';\r\n \r\n     $stmt = $conn->prepare(\"SELECT * FROM admin_settings WHERE username = ?\");\r\n     $stmt->bind_param(\"s\", $username);\r\n     $stmt->execute();\r\n@@ -19,9 +19,8 @@\n             header(\"Location: ../ADMIN/admin-dashboard.php\");\r\n             exit();\r\n         }\r\n     }\r\n-\r\n-    // Login failed\r\n+    // Failed login\r\n     echo \"<script>alert('Invalid username or password'); window.location.href='admin-login.php';</script>\";\r\n }\r\n ?>\r\n"
+                },
+                {
+                    "date": 1748607170742,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,25 +2,27 @@\n session_start();\r\n include '../db.php';\r\n \r\n if ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n-    $username = $_POST['username'] ?? '';\r\n+    $email = $_POST['email'] ?? '';\r\n     $password = $_POST['password'] ?? '';\r\n \r\n-    $stmt = $conn->prepare(\"SELECT * FROM admin_settings WHERE username = ?\");\r\n-    $stmt->bind_param(\"s\", $username);\r\n+    $stmt = $conn->prepare(\"SELECT * FROM admins WHERE email = ?\");\r\n+    $stmt->bind_param(\"s\", $email);\r\n     $stmt->execute();\r\n     $res = $stmt->get_result();\r\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n-            $_SESSION['admin_username'] = $admin['username'];\r\n+            $_SESSION['admin_email'] = $admin['email'];\r\n+            $_SESSION['admin_name'] = $admin['name'];\r\n             header(\"Location: ../ADMIN/admin-dashboard.php\");\r\n             exit();\r\n         }\r\n     }\r\n-    // Failed login\r\n-    echo \"<script>alert('Invalid username or password'); window.location.href='admin-login.php';</script>\";\r\n+\r\n+    // Login failed\r\n+    echo \"<script>alert('Invalid email or password'); window.location.href='admin-login.php';</script>\";\r\n }\r\n-?>\r\n+?>\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1748607504138,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,9 @@\n <?php\r\n+echo \"<pre>\";\r\n+print_r($admin);\r\n+echo \"</pre>\";\r\n+exit;\r\n session_start();\r\n include '../db.php';\r\n \r\n if ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n"
+                },
+                {
+                    "date": 1748607607538,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,6 @@\n <?php\r\n-echo \"<pre>\";\r\n-print_r($admin);\r\n-echo \"</pre>\";\r\n-exit;\r\n+\r\n session_start();\r\n include '../db.php';\r\n \r\n if ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n@@ -16,8 +13,15 @@\n     $res = $stmt->get_result();\r\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n+\r\n+        // 🔍 DEBUG OUTPUT\r\n+        echo \"<pre>\";\r\n+        print_r($admin);\r\n+        echo \"</pre>\";\r\n+        exit;\r\n+\r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n             $_SESSION['admin_name'] = $admin['name'];\r\n@@ -25,8 +29,6 @@\n             exit();\r\n         }\r\n     }\r\n \r\n-    // Login failed\r\n     echo \"<script>alert('Invalid email or password'); window.location.href='admin-login.php';</script>\";\r\n-}\r\n-?>\n\\ No newline at end of file\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1748607641406,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,14 +14,9 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n-        // 🔍 DEBUG OUTPUT\r\n-        echo \"<pre>\";\r\n-        print_r($admin);\r\n-        echo \"</pre>\";\r\n-        exit;\r\n-\r\n+        \r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n             $_SESSION['admin_name'] = $admin['name'];\r\n"
+                },
+                {
+                    "date": 1748609437295,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,14 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n-        \r\n+        echo \"<pre>\";\r\n+echo \"INPUT EMAIL: \" . $email . \"\\\\n\";\r\n+print_r($admin);\r\n+echo \"</pre>\";\r\n+exit;\r\n+\r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n             $_SESSION['admin_name'] = $admin['name'];\r\n"
+                },
+                {
+                    "date": 1748609502799,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,13 +14,8 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n-        echo \"<pre>\";\r\n-echo \"INPUT EMAIL: \" . $email . \"\\\\n\";\r\n-print_r($admin);\r\n-echo \"</pre>\";\r\n-exit;\r\n \r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n"
+                },
+                {
+                    "date": 1748609554103,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,8 +14,13 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n+        echo \"<pre>\";\r\n+echo \"INPUT EMAIL: \" . $email . \"\\\\n\";\r\n+print_r($admin);\r\n+echo \"</pre>\";\r\n+exit;\r\n \r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n"
+                },
+                {
+                    "date": 1748609649491,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,8 +20,13 @@\n print_r($admin);\r\n echo \"</pre>\";\r\n exit;\r\n \r\n+echo \"Entered Password: \" . $password . \"<br>\";\r\n+echo \"Expected Hash: \" . $admin['password'] . \"<br>\";\r\n+echo \"password_verify result: \" . (password_verify($password, $admin['password']) ? 'true' : 'false');\r\n+exit;\r\n+\r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n             $_SESSION['admin_name'] = $admin['name'];\r\n"
+                },
+                {
+                    "date": 1748609658254,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,10 +13,10 @@\n     $res = $stmt->get_result();\r\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n-\r\n-        echo \"<pre>\";\r\n+        \r\n+ echo \"<pre>\";\r\n echo \"INPUT EMAIL: \" . $email . \"\\\\n\";\r\n print_r($admin);\r\n echo \"</pre>\";\r\n exit;\r\n"
+                },
+                {
+                    "date": 1748610392840,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,12 +13,14 @@\n     $res = $stmt->get_result();\r\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n-        \r\n- echo \"<pre>\";\r\n-echo \"INPUT EMAIL: \" . $email . \"\\\\n\";\r\n-print_r($admin);\r\n+\r\n+echo \"<pre>\";\r\n+echo \"INPUT EMAIL: \" . $email . \"\\n\";\r\n+echo \"Entered Password: \" . $password . \"\\n\";\r\n+echo \"Expected Hash: \" . $admin['password'] . \"\\n\";\r\n+echo \"password_verify result: \" . (password_verify($password, $admin['password']) ? 'true' : 'false') . \"\\n\";\r\n echo \"</pre>\";\r\n exit;\r\n \r\n echo \"Entered Password: \" . $password . \"<br>\";\r\n"
+                },
+                {
+                    "date": 1748610628934,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,16 +14,8 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n-echo \"<pre>\";\r\n-echo \"INPUT EMAIL: \" . $email . \"\\n\";\r\n-echo \"Entered Password: \" . $password . \"\\n\";\r\n-echo \"Expected Hash: \" . $admin['password'] . \"\\n\";\r\n-echo \"password_verify result: \" . (password_verify($password, $admin['password']) ? 'true' : 'false') . \"\\n\";\r\n-echo \"</pre>\";\r\n-exit;\r\n-\r\n echo \"Entered Password: \" . $password . \"<br>\";\r\n echo \"Expected Hash: \" . $admin['password'] . \"<br>\";\r\n echo \"password_verify result: \" . (password_verify($password, $admin['password']) ? 'true' : 'false');\r\n exit;\r\n"
+                },
+                {
+                    "date": 1748610904785,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,13 +14,8 @@\n \r\n     if ($res && $res->num_rows === 1) {\r\n         $admin = $res->fetch_assoc();\r\n \r\n-echo \"Entered Password: \" . $password . \"<br>\";\r\n-echo \"Expected Hash: \" . $admin['password'] . \"<br>\";\r\n-echo \"password_verify result: \" . (password_verify($password, $admin['password']) ? 'true' : 'false');\r\n-exit;\r\n-\r\n         if (password_verify($password, $admin['password'])) {\r\n             $_SESSION['admin_logged_in'] = true;\r\n             $_SESSION['admin_email'] = $admin['email'];\r\n             $_SESSION['admin_name'] = $admin['name'];\r\n"
                 }
             ],
             "date": 1748603049545,

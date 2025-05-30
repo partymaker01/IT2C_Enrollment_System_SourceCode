@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1748597390102,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1748618803862,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <?php\r\n session_start();\r\n session_unset();\r\n session_destroy();\r\n-header(\"Location: admin-login.php\");\r\n+header(\"Location: ../logregfor/admin-logout.php\");\r\n exit;\r\n ?>\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1748618930137,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <?php\r\n session_start();\r\n session_unset();\r\n session_destroy();\r\n-header(\"Location: ../logregfor/admin-logout.php\");\r\n+header(\"Location: admin-login.php\");\r\n exit;\r\n ?>\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1748597390102,

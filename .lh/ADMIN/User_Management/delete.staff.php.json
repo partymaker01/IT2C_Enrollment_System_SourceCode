@@ -1,0 +1,50 @@
+{
+    "sourceFile": "ADMIN/User_Management/delete.staff.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 8,
+            "patches": [
+                {
+                    "date": 1748624763595,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1748624911006,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n <?php\r\n-include '../../db.php';\r\n+include '../db.php';\r\n if (isset($_GET['id'])) {\r\n   $id = intval($_GET['id']);\r\n   $conn->query(\"DELETE FROM staff WHERE id = $id\");\r\n }\r\n"
+                },
+                {
+                    "date": 1748624931834,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,7 +3,7 @@\n if (isset($_GET['id'])) {\r\n   $id = intval($_GET['id']);\r\n   $conn->query(\"DELETE FROM staff WHERE id = $id\");\r\n }\r\n-header(\"Location: manage-staff.php\"); // Go back to the main page\r\n+header(\"Location: manage-register-staff.php\"); // Go back to the main page\r\n exit();\r\n ?>\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1748625101571,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n <?php\r\n-include '../db.php';\r\n+include '../../db.php';\r\n if (isset($_GET['id'])) {\r\n   $id = intval($_GET['id']);\r\n   $conn->query(\"DELETE FROM staff WHERE id = $id\");\r\n }\r\n"
+                },
+                {
+                    "date": 1748628166780,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,16 @@\n <?php\r\n include '../../db.php';\r\n+\r\n if (isset($_GET['id'])) {\r\n   $id = intval($_GET['id']);\r\n-  $conn->query(\"DELETE FROM staff WHERE id = $id\");\r\n+\r\n+  // Use prepared statement\r\n+  $stmt = $conn->prepare(\"DELETE FROM registrar_staff WHERE id = ?\");\r\n\\ No newline at end of file\n+  $stmt->bind_param(\"i\", $id);\r\n+  $stmt->execute();\r\n+  $stmt->close();\r\n }\r\n-header(\"Location: manage-register-staff.php\"); // Go back to the main page\r\n+\r\n+header(\"Location: manage-register-staff.php\");\r\n exit();\r\n-?>\n+?>\r\n"
+                },
+                {
+                    "date": 1748628167275,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,5 +12,5 @@\n }\r\n \r\n header(\"Location: manage-register-staff.php\");\r\n exit();\r\n-?>\n\\ No newline at end of file\n+?>\r\n"
+                },
+                {
+                    "date": 1748629081546,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,16 +1,13 @@\n <?php\r\n include '../../db.php';\r\n-\r\n if (isset($_GET['id'])) {\r\n   $id = intval($_GET['id']);\r\n-\r\n-  // Use prepared statement\r\n-  $stmt = $conn->prepare(\"DELETE FROM registrar_staff WHERE id = ?\");\r\n+  $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n+  $stmt = $conn->prepare($sql);\r\n   $stmt->bind_param(\"i\", $id);\r\n   $stmt->execute();\r\n   $stmt->close();\r\n }\r\n-\r\n-header(\"Location: manage-register-staff.php\");\r\n+header(\"Location: manage-register-staff.php\"); // Go back to the main page\r\n exit();\r\n ?>\r\n"
+                },
+                {
+                    "date": 1748629154622,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,18 @@\n <?php\r\n include '../../db.php';\r\n-if (isset($_GET['id'])) {\r\n-  $id = intval($_GET['id']);\r\n+if (isset($_POST['id'])) {\r\n+  $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n-  $stmt->bind_param(\"i\", $id);\r\n-  $stmt->execute();\r\n+  $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n+  if ($stmt->execute()) {\r\n+    header(\"Location: manage-registrar-staff.php\"); // Redirect after successful deletion\r\n+    exit();\r\n+  } else {\r\n+    echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n+  }\r\n   $stmt->close();\r\n+} else {\r\n+  echo \"ID not provided.\"; // If no ID is passed\r\n }\r\n-header(\"Location: manage-register-staff.php\"); // Go back to the main page\r\n-exit();\r\n ?>\r\n"
+                },
+                {
+                    "date": 1748629170901,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,14 @@\n <?php\r\n-include '../../db.php';\r\n+include '../../db.php'; // Ensure the correct database connection\r\n+\r\n if (isset($_POST['id'])) {\r\n   $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n   $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n   if ($stmt->execute()) {\r\n-    header(\"Location: manage-registrar-staff.php\"); // Redirect after successful deletion\r\n+    header(\"Location: manage-register-staff.php\"); // Redirect after successful deletion\r\n     exit();\r\n   } else {\r\n     echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n   }\r\n"
+                }
+            ],
+            "date": 1748624763595,
+            "name": "Commit-0",
+            "content": "<?php\r\ninclude '../../db.php';\r\nif (isset($_GET['id'])) {\r\n  $id = intval($_GET['id']);\r\n  $conn->query(\"DELETE FROM staff WHERE id = $id\");\r\n}\r\nheader(\"Location: manage-staff.php\"); // Go back to the main page\r\nexit();\r\n?>"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 51,
+            "activePatchIndex": 53,
             "patches": [
                 {
                     "date": 1748595641911,
@@ -212,6 +212,14 @@
                 {
                     "date": 1748603861262,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,5 +33,5 @@\n             </div>\r\n         </div>\r\n     </div>\r\n </body>\r\n-</html>\n\\ No newline at end of file\n+</html>\r\n"
+                },
+                {
+                    "date": 1748607052745,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,18 +18,14 @@\n             <div class=\"col-md-4\">\r\n                 <div class=\"card shadow p-4\">\r\n                     <h4 class=\"text-center mb-3\">Admin Login</h4>\r\n                     <form method=\"POST\" action=\"admin-process-login.php\">\r\n-                        <div class=\"mb-3\">\r\n-                            <label for=\"username\" class=\"form-label\">Username</label>\r\n-                            <input type=\"text\" name=\"username\" class=\"form-control\" required>\r\n-                        </div>\r\n-                        <div class=\"mb-3\">\r\n-                            <label for=\"password\" class=\"form-label\">Password</label>\r\n-                            <input type=\"password\" name=\"password\" class=\"form-control\" required>\r\n-                        </div>\r\n-                        <button type=\"submit\" class=\"btn btn-success w-100\">Login</button>\r\n-                    </form>\r\n+    <label>Email:</label>\r\n+    <input type=\"email\" name=\"email\" required>\r\n+    <label>Password:</label>\r\n+    <input type=\"password\" name=\"password\" required>\r\n+    <button type=\"submit\">Login</button>\r\n+</form>\r\n                 </div>\r\n             </div>\r\n         </div>\r\n     </div>\r\n"
+                },
+                {
+                    "date": 1748609556880,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,9 @@\n+<!-- admin acccount\r\n+\r\n+email:    admin@example.com\r\n+password: admin123 -->\r\n+\r\n <?php\r\n session_start();\r\n if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {\r\n     header(\"Location: ../ADMIN/admin-dashboard.php\");\r\n@@ -18,14 +23,14 @@\n             <div class=\"col-md-4\">\r\n                 <div class=\"card shadow p-4\">\r\n                     <h4 class=\"text-center mb-3\">Admin Login</h4>\r\n                     <form method=\"POST\" action=\"admin-process-login.php\">\r\n-    <label>Email:</label>\r\n-    <input type=\"email\" name=\"email\" required>\r\n-    <label>Password:</label>\r\n-    <input type=\"password\" name=\"password\" required>\r\n-    <button type=\"submit\">Login</button>\r\n-</form>\r\n+                    <label>Email:</label>\r\n+                    <input type=\"email\" name=\"email\" required>\r\n+                    <label>Password:</label>\r\n+                    <input type=\"password\" name=\"password\" required>\r\n+                    <button type=\"submit\">Login</button>\r\n+                </form>\r\n                 </div>\r\n             </div>\r\n         </div>\r\n     </div>\r\n"
                 }
             ],
             "date": 1748595641911,

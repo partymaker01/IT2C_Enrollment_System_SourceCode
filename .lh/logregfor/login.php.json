@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 11,
+            "activePatchIndex": 12,
             "patches": [
                 {
                     "date": 1748590698861,
@@ -52,6 +52,10 @@
                 {
                     "date": 1748597663054,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -123,9 +123,9 @@\n <html lang=\"en\">\r\n <head>\r\n   <meta charset=\"UTF-8\" />\r\n   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\r\n-  <title>Login/Register/ForgotPassword</title>\r\n+  <title>Login/Register/ForgotPassword - For Student</title>\r\n   <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'/>\r\n   <link rel=\"stylesheet\" href=\"/IT2C_Enrollment_System_SourceCode/CSS/style.css\">\r\n   <link rel=\"icon\" href=\"/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg\" type=\"image/x-icon\">\r\n"
+                },
+                {
+                    "date": 1748635086913,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,9 @@\n+<!-- student acoount\r\n+\r\n+username: student\r\n+password: student123 -->\r\n+\r\n <?php\r\n session_start();\r\n include '../db.php';\r\n \r\n"
                 }
             ],
             "date": 1748590698860,
