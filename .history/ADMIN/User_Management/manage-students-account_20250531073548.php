@@ -36,79 +36,18 @@ if (isset($_GET['delete_id'])) {
 $stmt = $pdo->query("SELECT * FROM students");
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manage Student Accounts</title>
+  <title>Manage Students</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <style>
-    body {
-      background-color: #f1f8e9;
-      min-height: 100vh;
-    }
-    .navbar {
-      background-color: #2e7d32;
-    }
-    .navbar-brand, .nav-link {
-      color: #fff !important;
-      font-weight: 600;
-    }
-    .school-logo {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-right: 10px;
-      border: 2px solid #fff;
-    }
-    .container {
-      max-width: 960px;
-      margin-top: 40px;
-    }
-    .table-responsive {
-      background: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 0 12px rgba(0,0,0,0.05);
-    }
-    .modal-header.edit-mode {
-      background-color:rgb(8, 129, 18);
-      color: white;
-    }
-    .modal-header.confirm-delete {
-      background-color: #dc3545;
-      color: white;
-    }
-    .btn-delete-confirm {
-      background-color: #dc3545;
-      color: white;
-    }
-  </style>
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-success py-3">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
-      Admin Panel
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/ADMIN/admin-dashboard.php" class="btn btn-outline-secondary mb-3">
-          <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-      </ul>
-      </div>
-    </div>
-  </nav>
+<body class="bg-light">
 
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
