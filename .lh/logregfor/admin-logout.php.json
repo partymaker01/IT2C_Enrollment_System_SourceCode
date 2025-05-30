@@ -1,0 +1,18 @@
+{
+    "sourceFile": "logregfor/admin-logout.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1748597390102,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1748597390102,
+            "name": "Commit-0",
+            "content": "<?php\r\nsession_start();\r\nsession_unset();\r\nsession_destroy();\r\nheader(\"Location: admin-login.php\");\r\nexit;\r\n?>"
+        }
+    ]
+}

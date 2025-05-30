@@ -1,0 +1,22 @@
+{
+    "sourceFile": "logregfor/admin-process-login.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1748603049545,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1748603836865,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,10 +2,10 @@\n session_start();\r\n include '../db.php';\r\n \r\n if ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n-    $username = trim($_POST['username'] ?? '');\r\n-    $password = trim($_POST['password'] ?? '');\r\n+    $username = $_POST['username'] ?? '';\r\n+    $password = $_POST['password'] ?? '';\r\n \r\n     $stmt = $conn->prepare(\"SELECT * FROM admin_settings WHERE username = ?\");\r\n     $stmt->bind_param(\"s\", $username);\r\n     $stmt->execute();\r\n@@ -19,9 +19,8 @@\n             header(\"Location: ../ADMIN/admin-dashboard.php\");\r\n             exit();\r\n         }\r\n     }\r\n-\r\n-    // Login failed\r\n+    // Failed login\r\n     echo \"<script>alert('Invalid username or password'); window.location.href='admin-login.php';</script>\";\r\n }\r\n ?>\r\n"
+                }
+            ],
+            "date": 1748603049545,
+            "name": "Commit-0",
+            "content": "<?php\r\nsession_start();\r\ninclude '../db.php';\r\n\r\nif ($_SERVER[\"REQUEST_METHOD\"] === \"POST\") {\r\n    $username = trim($_POST['username'] ?? '');\r\n    $password = trim($_POST['password'] ?? '');\r\n\r\n    $stmt = $conn->prepare(\"SELECT * FROM admin_settings WHERE username = ?\");\r\n    $stmt->bind_param(\"s\", $username);\r\n    $stmt->execute();\r\n    $res = $stmt->get_result();\r\n\r\n    if ($res && $res->num_rows === 1) {\r\n        $admin = $res->fetch_assoc();\r\n        if (password_verify($password, $admin['password'])) {\r\n            $_SESSION['admin_logged_in'] = true;\r\n            $_SESSION['admin_username'] = $admin['username'];\r\n            header(\"Location: ../ADMIN/admin-dashboard.php\");\r\n            exit();\r\n        }\r\n    }\r\n\r\n    // Login failed\r\n    echo \"<script>alert('Invalid username or password'); window.location.href='admin-login.php';</script>\";\r\n}\r\n?>\r\n"
+        }
+    ]
+}
