@@ -250,7 +250,7 @@ form{
     left: -250%;
     width: 300%;
     height: 100%;
-    background-image: url("/picture/tlgc_pic.jpg");
+    background-image: src"/IT2_Enrollment_System/picture/tlgc_pic.jpg";
     border-radius: 150px;
     z-index: 2;
     transition: 1.2s ease-in-out;

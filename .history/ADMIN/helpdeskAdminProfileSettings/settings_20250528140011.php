@@ -7,8 +7,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
 
 // DB connection (adjust with your actual DB credentials)
 $host = "localhost";
-$user = "root";
-$pass = "";
+$user = "your_db_user";
+$pass = "your_db_password";
 $db   = "enrollment_system";
 
 $conn = new mysqli($host, $user, $pass, $db);

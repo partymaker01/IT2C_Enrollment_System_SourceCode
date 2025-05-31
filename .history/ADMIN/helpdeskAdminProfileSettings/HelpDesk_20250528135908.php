@@ -2,8 +2,8 @@
 // DB connection - adjust to your credentials
 $host = 'localhost';
 $db = 'enrollment_system';
-$user = 'root';
-$pass = '';
+$user = 'your_username';
+$pass = 'your_password';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
