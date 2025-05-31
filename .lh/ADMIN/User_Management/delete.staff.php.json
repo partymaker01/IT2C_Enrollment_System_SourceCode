@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 8,
+            "activePatchIndex": 13,
             "patches": [
                 {
                     "date": 1748624763595,
@@ -40,6 +40,26 @@
                 {
                     "date": 1748629170901,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,14 @@\n <?php\r\n-include '../../db.php';\r\n+include '../../db.php'; // Ensure the correct database connection\r\n+\r\n if (isset($_POST['id'])) {\r\n   $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n   $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n   if ($stmt->execute()) {\r\n-    header(\"Location: manage-registrar-staff.php\"); // Redirect after successful deletion\r\n+    header(\"Location: manage-register-staff.php\"); // Redirect after successful deletion\r\n     exit();\r\n   } else {\r\n     echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n   }\r\n"
+                },
+                {
+                    "date": 1748649799223,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,19 +1,19 @@\n <?php\r\n-include '../../db.php'; // Ensure the correct database connection\r\n+include '../../db.php'; \r\n \r\n if (isset($_POST['id'])) {\r\n-  $id = intval($_POST['id']); // Get the ID passed via POST\r\n+  $id = intval($_POST['id']); \r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n-  $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n+  $stmt->bind_param(\"i\", $id);\r\n   if ($stmt->execute()) {\r\n-    header(\"Location: manage-register-staff.php\"); // Redirect after successful deletion\r\n+    header(\"Location: manage-register-staff.php\");\r\n     exit();\r\n   } else {\r\n-    echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n+    echo \"Error deleting record: \" . $conn->error; \r\n   }\r\n   $stmt->close();\r\n } else {\r\n-  echo \"ID not provided.\"; // If no ID is passed\r\n+  echo \"ID not provided.\"; \r\n }\r\n ?>\r\n"
+                },
+                {
+                    "date": 1748650315347,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,19 +1,19 @@\n <?php\r\n-include '../../db.php'; \r\n+include '../../db.php'; // Ensure the correct database connection\r\n \r\n if (isset($_POST['id'])) {\r\n-  $id = intval($_POST['id']); \r\n+  $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n-  $stmt->bind_param(\"i\", $id);\r\n+  $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n   if ($stmt->execute()) {\r\n-    header(\"Location: manage-register-staff.php\");\r\n+    header(\"Location: manage-register-staff.php\"); // Redirect after successful deletion\r\n     exit();\r\n   } else {\r\n-    echo \"Error deleting record: \" . $conn->error; \r\n+    echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n   }\r\n   $stmt->close();\r\n } else {\r\n-  echo \"ID not provided.\"; \r\n+  echo \"ID not provided.\"; // If no ID is passed\r\n }\r\n ?>\r\n"
+                },
+                {
+                    "date": 1748650490545,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,9 @@\n <?php\r\n-include '../../db.php'; // Ensure the correct database connection\r\n-\r\n+echo \"Delete.php is working\"; // Debugging line\r\n+include '../../db.php';\r\n+if (isset($_POST['id'])) {// Ensure the correct database connection\r\n+}\r\n if (isset($_POST['id'])) {\r\n   $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n"
+                },
+                {
+                    "date": 1748651495153,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,7 @@\n <?php\r\n-echo \"Delete.php is working\"; // Debugging line\r\n-include '../../db.php';\r\n-if (isset($_POST['id'])) {// Ensure the correct database connection\r\n-}\r\n+include '../../db.php'; // Ensure the correct database connection\r\n+\r\n if (isset($_POST['id'])) {\r\n   $id = intval($_POST['id']); // Get the ID passed via POST\r\n   $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n   $stmt = $conn->prepare($sql);\r\n@@ -17,5 +15,5 @@\n   $stmt->close();\r\n } else {\r\n   echo \"ID not provided.\"; // If no ID is passed\r\n }\r\n-?>\r\n+?>\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1748654680773,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,19 +1,22 @@\n <?php\r\n-include '../../db.php'; // Ensure the correct database connection\r\n+include '../../db.php';\r\n \r\n-if (isset($_POST['id'])) {\r\n-  $id = intval($_POST['id']); // Get the ID passed via POST\r\n-  $sql = \"DELETE FROM registrar_staff WHERE id = ?\";\r\n-  $stmt = $conn->prepare($sql);\r\n-  $stmt->bind_param(\"i\", $id); // Bind the ID as an integer\r\n-  if ($stmt->execute()) {\r\n-    header(\"Location: manage-register-staff.php\"); // Redirect after successful deletion\r\n-    exit();\r\n-  } else {\r\n-    echo \"Error deleting record: \" . $conn->error; // If there's an error with the delete query\r\n-  }\r\n-  $stmt->close();\r\n+if ($_SERVER['REQUEST_METHOD'] === 'POST') {\r\n+    $id = $_POST['id'];\r\n+\r\n\\ No newline at end of file\n+    if (!empty($id)) {\r\n+        $stmt = $conn->prepare(\"DELETE FROM admin_settings WHERE id = ?\");\r\n+        $stmt->bind_param(\"i\", $id);\r\n+\r\n+        if ($stmt->execute()) {\r\n+            header(\"Location: manage-admins-users.php\"); // redirect back\r\n+            exit;\r\n+        } else {\r\n+            echo \"Error deleting record: \" . $conn->error;\r\n+        }\r\n+    } else {\r\n+        echo \"Invalid ID.\";\r\n+    }\r\n } else {\r\n-  echo \"ID not provided.\"; // If no ID is passed\r\n-}\r\n-?>\n+    echo \"Invalid request.\";\r\n+}\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1748624763595,

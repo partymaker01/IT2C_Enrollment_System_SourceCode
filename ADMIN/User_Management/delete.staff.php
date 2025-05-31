@@ -1,19 +1,22 @@
 <?php
-include '../../db.php'; // Ensure the correct database connection
+include '../../db.php';
 
-if (isset($_POST['id'])) {
-  $id = intval($_POST['id']); // Get the ID passed via POST
-  $sql = "DELETE FROM registrar_staff WHERE id = ?";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $id); // Bind the ID as an integer
-  if ($stmt->execute()) {
-    header("Location: manage-register-staff.php"); // Redirect after successful deletion
-    exit();
-  } else {
-    echo "Error deleting record: " . $conn->error; // If there's an error with the delete query
-  }
-  $stmt->close();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'];
+
+    if (!empty($id)) {
+        $stmt = $conn->prepare("DELETE FROM admin_settings WHERE id = ?");
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            header("Location: manage-admins-users.php"); // redirect back
+            exit;
+        } else {
+            echo "Error deleting record: " . $conn->error;
+        }
+    } else {
+        echo "Invalid ID.";
+    }
 } else {
-  echo "ID not provided."; // If no ID is passed
+    echo "Invalid request.";
 }
-?>
