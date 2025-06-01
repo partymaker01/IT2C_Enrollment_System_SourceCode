@@ -150,7 +150,7 @@ $schoolYear = $enrollment['school_year'] ?? 'N/A';
 <body>
 <nav class="navbar navbar-expand-lg">
   <div class="container">
-    <a class="navbar-brand" img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
+    <a class="navbar-brand" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php"><img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo"></a  >
       Student Dashboard
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

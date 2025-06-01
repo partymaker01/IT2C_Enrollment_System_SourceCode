@@ -36,15 +36,6 @@ $announcements = $stmt->fetchAll();
     body {
       background-color: #e8f5e9;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .announcement-card {
       cursor: pointer;
       transition: box-shadow 0.3s ease;

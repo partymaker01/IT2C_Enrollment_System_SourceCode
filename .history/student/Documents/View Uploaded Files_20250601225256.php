@@ -56,15 +56,6 @@ function badgeClass($status) {
   .nav-link:hover {
       color: #c8e6c9 !important;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
   .btn-reupload:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -72,26 +63,26 @@ function badgeClass($status) {
 </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
-      <div class="container">
-        <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
-          Student Dashboard
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
-                <i class="bi bi-arrow-left"></i> Back to Dashboard
-              </a>
-            </li>
-          </ul>
-        </div>
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
+        Student Dashboard
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
+              <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
+        </ul>
       </div>
-    </nav>
+    </div>
+  </nav>
 
   <div class="container my-5">
     <h2 class="text-success mb-4">

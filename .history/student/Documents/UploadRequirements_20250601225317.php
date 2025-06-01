@@ -105,15 +105,6 @@ $stmt->close();
     .navbar { background-color: #2e7d32; }
     .navbar-brand, .nav-link { color: #fff !important; font-weight: 600; letter-spacing: 0.05em; }
     .nav-link:hover { color: #c8e6c9 !important; }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .badge-uploaded { background-color: #2196f3; }
     .badge-verified { background-color: #43a047; }
     .badge-rejected { background-color: #e53935; }

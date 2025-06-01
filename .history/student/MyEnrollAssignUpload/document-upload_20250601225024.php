@@ -90,15 +90,6 @@ function canReupload($status) {
     .navbar { background-color: #2e7d32; }
     .navbar-brand, .nav-link { color: #fff !important; font-weight: 600; letter-spacing: 0.05em; }
     .nav-link:hover { color: #c8e6c9 !important; }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .status-uploaded { color: #fbc02d; font-weight: 600; }
     .status-verified { color: #43a047; font-weight: 600; }
     .status-rejected { color: #e53935; font-weight: 600; }

@@ -93,15 +93,6 @@ try {
     body {
       background-color: #e8f5e9;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .status-open {
       color: #2e7d32; /* green */
       font-weight: 600;

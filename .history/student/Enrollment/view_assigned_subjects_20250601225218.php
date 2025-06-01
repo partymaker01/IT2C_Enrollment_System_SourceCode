@@ -79,15 +79,6 @@ $subjects = $stmtSubjects->fetchAll(PDO::FETCH_ASSOC);
       color: #2e7d32;
       font-weight: bold;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .table thead {
       background-color: #43a047;
       color: white;

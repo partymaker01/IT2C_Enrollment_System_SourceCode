@@ -81,15 +81,6 @@ try {
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     body { background-color: #e8f5e9; }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     .accordion-button:focus { box-shadow: none; }
     .badge-approved { background-color: #43a047; }
     .badge-pending { background-color: #fbc02d; color: black; }

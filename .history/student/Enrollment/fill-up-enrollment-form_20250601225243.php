@@ -81,15 +81,6 @@ $conn->close();
       color: #2e7d32;
       font-weight: 700;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
-
     label {
       color: #0f0f0f; 
       font-weight: 600;
