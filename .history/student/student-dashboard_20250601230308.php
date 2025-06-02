@@ -76,14 +76,6 @@ $schoolYear = $enrollment['school_year'] ?? 'N/A';
     .nav-link:hover {
       color: #c8e6c9 !important;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
     .profile-card {
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
@@ -158,9 +150,9 @@ $schoolYear = $enrollment['school_year'] ?? 'N/A';
 <body>
 <nav class="navbar navbar-expand-lg">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
+    <a img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
       Student Dashboard
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

@@ -76,14 +76,6 @@ $schoolYear = $enrollment['school_year'] ?? 'N/A';
     .nav-link:hover {
       color: #c8e6c9 !important;
     }
-    .school-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #fff;
-}
     .profile-card {
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);

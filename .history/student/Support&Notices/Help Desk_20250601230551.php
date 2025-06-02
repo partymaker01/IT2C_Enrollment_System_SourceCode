@@ -126,25 +126,25 @@ try {
 <body>
   <nav class="navbar navbar-expand-lg">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
+    <a class="navbar-brand d-flex align-items-center" href="#">
       <img src="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" alt="School Logo" class="school-logo">
-      <span class="text-white ms-2">Student Dashboard</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-        </li>
-      </ul>
+      Student Dashboard
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/IT2C_Enrollment_System_SourceCode/student/student-dashboard.php">
+              <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
   <div class="container my-5">
     <h2 class="text-success mb-4">Help Desk</h2>
