@@ -1,9 +1,0 @@
-{
-    "name": "School Admin",
-    "email": "admin@example.com",
-    "email_notify": true,
-    "sms_notify": false,
-    "maintenance_mode": false,
-    "auto_backup": true,
-    "password": "$2y$10$R1\/gPtpEkaojEVq3CsIs9e1XB329HPeuGcyNf0IMErb4.BgdgFWIC"
-}
