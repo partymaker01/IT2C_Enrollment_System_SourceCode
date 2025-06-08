@@ -1,0 +1,18 @@
+{
+    "sourceFile": "scripts/alter table pag nag error",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1749401137529,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1749401137529,
+            "name": "Commit-0",
+            "content": "ALTER TABLE students ADD COLUMN date_registered DATETIME DEFAULT CURRENT_TIMESTAMP;\r\n"
+        }
+    ]
+}

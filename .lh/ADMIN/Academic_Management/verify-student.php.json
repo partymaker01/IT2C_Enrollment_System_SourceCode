@@ -1,0 +1,18 @@
+{
+    "sourceFile": "ADMIN/Academic_Management/verify-student.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1749402257252,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1749402257252,
+            "name": "Commit-0",
+            "content": "<?php\nsession_start();\ninclude '../../db.php';\n\n// Check admin authentication\nif (!isset($_SESSION['admin_id'])) {\n    http_response_code(401);\n    echo json_encode(['success' => false, 'message' => 'Unauthorized']);\n    exit();\n}\n\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    $studentId = trim($_POST['student_id'] ?? '');\n    \n    if (!$studentId) {\n        echo json_encode(['success' => false, 'message' => 'Student ID is required']);\n        exit();\n    }\n\n    try {\n        $stmt = $conn->prepare(\"SELECT first_name, last_name, middle_name, email, program, year_level FROM students WHERE student_id = ?\");\n        $stmt->bind_param(\"s\", $studentId);\n        $stmt->execute();\n        $result = $stmt->get_result();\n        \n        if ($result->num_rows > 0) {\n            $student = $result->fetch_assoc();\n            echo json_encode([\n                'success' => true,\n                'name' => $student['first_name'] . ' ' . $student['middle_name'] . ' ' . $student['last_name'],\n                'email' => $student['email'],\n                'program' => $student['program'],\n                'year_level' => $student['year_level']\n            ]);\n        } else {\n            echo json_encode(['success' => false, 'message' => 'Student not found']);\n        }\n    } catch (Exception $e) {\n        echo json_encode(['success' => false, 'message' => 'Database error']);\n    }\n} else {\n    http_response_code(405);\n    echo json_encode(['success' => false, 'message' => 'Method not allowed']);\n}\n?>\n"
+        }
+    ]
+}
