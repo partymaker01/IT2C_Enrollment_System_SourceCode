@@ -1,0 +1,26 @@
+{
+    "sourceFile": "scripts/alter table pag nag error.sql",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1749408624325,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749409264214,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,4 +11,35 @@\n DESCRIBE students;\r\n \r\n SELECT 'formatted_id column added successfully!' as status;\r\n \r\n+\r\n+\r\n+-- Add formatted_id column to students table if it doesn't exist\r\n+SET @column_exists = (\r\n+    SELECT COUNT(*) \r\n+    FROM INFORMATION_SCHEMA.COLUMNS \r\n+    WHERE TABLE_SCHEMA = DATABASE() \r\n+    AND TABLE_NAME = 'students' \r\n+    AND COLUMN_NAME = 'formatted_id'\r\n+);\r\n+\r\n+SET @sql = IF(@column_exists = 0, \r\n+    'ALTER TABLE students ADD COLUMN formatted_id VARCHAR(20) NULL', \r\n+    'SELECT \"formatted_id column already exists\" as message'\r\n+);\r\n+\r\n+PREPARE stmt FROM @sql;\r\n+EXECUTE stmt;\r\n+DEALLOCATE PREPARE stmt;\r\n+\r\n+-- Create index for better performance\r\n+SET @index_sql = IF(@column_exists = 0, \r\n+    'CREATE INDEX idx_formatted_id ON students(formatted_id)', \r\n+    'SELECT \"Index already exists or not needed\" as message'\r\n+);\r\n+\r\n+PREPARE stmt FROM @index_sql;\r\n+EXECUTE stmt;\r\n+DEALLOCATE PREPARE stmt;\r\n+\r\n+SELECT 'Setup completed successfully!' as status;\r\n"
+                },
+                {
+                    "date": 1749413467976,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,16 @@\n \r\n -- Add the formatted_id column to students table\r\n ALTER TABLE students ADD COLUMN formatted_id VARCHAR(20) NULL;\r\n \r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n -- Create index for better performance\r\n CREATE INDEX idx_formatted_id ON students(formatted_id);\r\n \r\n -- Check if column was added successfully\r\n"
+                }
+            ],
+            "date": 1749408624325,
+            "name": "Commit-0",
+            "content": "ALTER TABLE students ADD COLUMN date_registered DATETIME DEFAULT CURRENT_TIMESTAMP;\r\n\r\n\r\n-- Add the formatted_id column to students table\r\nALTER TABLE students ADD COLUMN formatted_id VARCHAR(20) NULL;\r\n\r\n-- Create index for better performance\r\nCREATE INDEX idx_formatted_id ON students(formatted_id);\r\n\r\n-- Check if column was added successfully\r\nDESCRIBE students;\r\n\r\nSELECT 'formatted_id column added successfully!' as status;\r\n\r\n"
+        }
+    ]
+}

@@ -1,0 +1,86 @@
+<?php
+// Helper file para sa student ID generation
+
+// Function to generate student ID based on program
+function generateStudentId($conn, $program) {
+    $year = date('y');
+
+    $programCodes = [
+        'Information Technology' => 'IT',
+        'Hotel and Restaurant Management Technology' => 'HRMT', 
+        'Electronics and Computer Technology' => 'ECT',
+        'Hospitality Services technology' => 'HST',
+        'Techncal Vocational Education Techonlogy' => 'TVET',
+        'Enterpreneurship Technology' => 'ET',
+    ];
+
+    $programCode = $programCodes[$program] ?? 'GEN';
+    $basePattern = "TLGC-{$programCode}-{$year}-";
+
+    $stmt = $conn->prepare("
+        SELECT student_id 
+        FROM students 
+        WHERE student_id LIKE ? 
+        ORDER BY student_id DESC 
+        LIMIT 1
+    ");
+    $likePattern = $basePattern . '%';
+    $stmt->bind_param("s", $likePattern);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $lastId = $result->fetch_column();
+
+    if ($lastId) {
+        $lastNumber = intval(substr($lastId, -4));
+        $newNumber = $lastNumber + 1;
+    } else {
+        $newNumber = 1;
+    }
+
+    $formattedNumber = str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+    return $basePattern . $formattedNumber;
+}
+
+function updateStudentId($conn, $oldId, $newId) {
+    $conn->begin_transaction();
+    try {
+        $stmt = $conn->prepare("UPDATE students SET student_id = ? WHERE student_id = ?");
+        $stmt->bind_param("ss", $newId, $oldId);
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to update students table");
+        }
+
+        $stmt = $conn->prepare("UPDATE enrollments SET student_id = ? WHERE student_id = ?");
+        $stmt->bind_param("ss", $newId, $oldId);
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to update enrollments table");
+        }
+
+        $conn->commit();
+        return true;
+    } catch (Exception $e) {
+        $conn->rollback();
+        error_log("updateStudentId error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// ✅ Fix: Get $currentStudentId BEFORE using it
+$currentStudentId = $_GET['student_id'] ?? $_POST['student_id'] ?? null;
+
+if (!$currentStudentId) {
+    throw new Exception("Student ID not provided for update.");
+}
+
+// ✅ Now safe to check in DB
+$stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE student_id = ?");
+$stmt->bind_param("s", $currentStudentId);
+$stmt->execute();
+$stmt->bind_result($count);
+$stmt->fetch();
+$stmt->close();
+
+if ($count == 0) {
+    throw new Exception("Old student ID not found in students table: $currentStudentId");
+}
+?>
