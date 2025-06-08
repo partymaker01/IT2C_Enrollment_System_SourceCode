@@ -1,6 +1,7 @@
 -- Students Table
 CREATE TABLE students (
-    student_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50),
@@ -59,9 +60,10 @@ VALUES (
 );
 
 -- Enrollments Table
+-- Fixed Enrollments Table
 CREATE TABLE enrollments (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    student_id INT UNSIGNED NOT NULL,
+    student_id VARCHAR(20) NOT NULL,
     status ENUM('pending', 'approved', 'rejected', 'not_enrolled') DEFAULT 'pending',
     semester VARCHAR(20) NOT NULL,
     school_year VARCHAR(20) NOT NULL,
@@ -73,12 +75,14 @@ CREATE TABLE enrollments (
     notification TEXT,
     date_submitted DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    UNIQUE KEY uniq_enrollment (student_id, semester, school_year), -- ✅ allows multiple terms
     INDEX idx_student_id (student_id)
 );
 
 -- Subjects Table
 CREATE TABLE subjects (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     subject_code VARCHAR(20) NOT NULL UNIQUE,
     subject_title VARCHAR(100) NOT NULL,
     description VARCHAR(100),
@@ -92,6 +96,7 @@ CREATE TABLE subjects (
 -- Enrollment Subjects Table (junction for enrollments and subjects)
 CREATE TABLE enrollment_subjects (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
     enrollment_id INT UNSIGNED NOT NULL,
     subject_code VARCHAR(20) NOT NULL,
     subject_description VARCHAR(255),
@@ -106,7 +111,7 @@ CREATE TABLE enrollment_subjects (
 -- Student Subjects Table (for direct assignment)
 CREATE TABLE student_subjects (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    student_id INT UNSIGNED NOT NULL,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     subject_id INT UNSIGNED NOT NULL,
     status VARCHAR(20) DEFAULT 'Confirmed',
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
@@ -117,6 +122,7 @@ CREATE TABLE student_subjects (
 -- Enrollment Periods Table
 CREATE TABLE enrollment_periods (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -125,6 +131,7 @@ CREATE TABLE enrollment_periods (
 -- Tickets Table
 CREATE TABLE tickets (
     ticket_id VARCHAR(20) PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     student_name VARCHAR(100) NOT NULL,
     category VARCHAR(100) NOT NULL,
     priority ENUM('Low', 'Medium', 'High') NOT NULL DEFAULT 'Low',
@@ -147,18 +154,18 @@ CREATE TABLE conversations (
 -- Password Resets Table
 CREATE TABLE password_resets (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
+    student_id VARCHAR(20) NOT NULL,
     token VARCHAR(255) NOT NULL UNIQUE,
     expires_at DATETIME NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES students(student_id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id)
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    INDEX idx_student_id (student_id)
 );
 
 -- Uploaded Documents Table
 CREATE TABLE uploaded_documents (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    student_id INT UNSIGNED NOT NULL,
+    student_id VARCHAR(20) NOT NULL UNIQUE,
     document_name VARCHAR(100) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -31,6 +31,9 @@ function badgeClass($status) {
         default => 'bg-secondary',
     };
 }
+
+// Base URL or path for uploaded files - adjust if needed
+$baseUploadPath = '/IT2C_Enrollment_System_SourceCode/uploads/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,18 +59,31 @@ function badgeClass($status) {
   .nav-link:hover {
       color: #c8e6c9 !important;
     }
-    .school-logo {
+  .school-logo {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 50%;
     margin-right: 10px;
     border: 2px solid #fff;
-}
-
+  }
   .btn-reupload:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+  .file-preview img {
+    max-width: 120px;
+    max-height: 80px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .file-preview embed {
+    width: 120px;
+    height: 80px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
   }
 </style>
 </head>
@@ -102,7 +118,7 @@ function badgeClass($status) {
         <thead class="table-success">
           <tr>
             <th>Document Type</th>
-            <th>File Name</th>
+            <th>File Preview</th>
             <th>Upload Date</th>
             <th>Status</th>
             <th>Remarks</th>
@@ -110,33 +126,43 @@ function badgeClass($status) {
           </tr>
         </thead>
         <tbody>
-          <?php if ($uploadedFiles): ?>
-            <?php foreach ($uploadedFiles as $file): ?>
-              <tr>
-                <td><?= htmlspecialchars($file['doc_type']) ?></td>
-                <td><?= htmlspecialchars($file['file_name']) ?></td>
-                <td><?= date('M d, Y', strtotime($file['upload_date'])) ?></td>
-                <td>
-                  <span class="badge <?= badgeClass($file['status']) ?>">
-                    <?= htmlspecialchars($file['status']) ?>
-                  </span>
-                </td>
-                <td><?= htmlspecialchars($file['remarks']) ?></td>
-                <td>
-                  <a href="<?= htmlspecialchars($file['view_link']) ?>" target="_blank" class="btn btn-sm btn-outline-secondary me-1" aria-label="View <?= htmlspecialchars($file['doc_type']) ?>">View</a>
-                  <?php if ($file['can_reupload']): ?>
-                    <a href="#" class="btn btn-sm btn-outline-primary btn-reupload" aria-label="Re-upload <?= htmlspecialchars($file['doc_type']) ?>">Re-upload</a>
-                  <?php else: ?>
-                    <button class="btn btn-sm btn-outline-primary btn-reupload" disabled aria-label="Re-upload <?= htmlspecialchars($file['doc_type']) ?>">Re-upload</button>
-                  <?php endif; ?>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          <?php else: ?>
+          <?php foreach ($uploadedFiles as $file): 
+            $filePath = $file['file_path'] ?? '';
+            $fullFilePath = $baseUploadPath . $filePath;
+            $fileExt = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            $fileName = basename($filePath);
+            // For mime type detection, fallback to extension check if mime_content_type not available on server
+            $fullServerPath = $_SERVER['DOCUMENT_ROOT'] . $fullFilePath;
+            $mimeType = @mime_content_type($fullServerPath) ?: '';
+            ?>
             <tr>
-              <td colspan="6" class="text-center">No uploaded documents found.</td>
+              <td><?= htmlspecialchars($file['document_name'] ?? 'N/A') ?></td>
+              <td class="file-preview">
+                <?php if (str_starts_with($mimeType, 'image/') || in_array($fileExt, ['jpg','jpeg','png','gif','bmp','webp'])): ?>
+                  <img src="<?= htmlspecialchars($fullFilePath) ?>" alt="Image preview of <?= htmlspecialchars($fileName) ?>" />
+                <?php elseif ($mimeType === 'application/pdf' || $fileExt === 'pdf'): ?>
+                  <embed src="<?= htmlspecialchars($fullFilePath) ?>" type="application/pdf" />
+                <?php else: ?>
+                  <a href="<?= htmlspecialchars($fullFilePath) ?>" target="_blank"><?= htmlspecialchars($fileName) ?></a>
+                <?php endif; ?>
+              </td>
+              <td><?= !empty($file['upload_date']) ? date('M d, Y', strtotime($file['upload_date'])) : 'N/A' ?></td>
+              <td>
+                <span class="badge <?= badgeClass($file['status'] ?? '') ?>">
+                  <?= htmlspecialchars($file['status'] ?? 'Unknown') ?>
+                </span>
+              </td>
+              <td><?= htmlspecialchars($file['remarks'] ?? '') ?></td>
+              <td>
+                <a href="<?= htmlspecialchars($fullFilePath) ?>" target="_blank" class="btn btn-sm btn-outline-secondary me-1">View</a>
+                <?php if (!empty($file['can_reupload'])): ?>
+                  <a href="#" class="btn btn-sm btn-outline-primary btn-reupload">Re-upload</a>
+                <?php else: ?>
+                  <button class="btn btn-sm btn-outline-primary btn-reupload" disabled>Re-upload</button>
+                <?php endif; ?>
+              </td>
             </tr>
-          <?php endif; ?>
+          <?php endforeach; ?>
         </tbody>
       </table>
     </div>

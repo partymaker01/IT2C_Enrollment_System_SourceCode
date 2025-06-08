@@ -5,21 +5,21 @@ $username = "root";
 $password = "";
 $dbname = "enrollment_system";
 
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
 // Get enrollment id from URL
-$enrollment_id = isset($_GET['student_id']) ? intval($_GET['student_id']) : 0;
+$enrollment_id = isset($_GET['enrollment_id']) ? intval($_GET['enrollment_id']) : 0;
 
 if ($enrollment_id <= 0) {
-    die("❌ Invalid enrollment ID: " . htmlspecialchars($_GET['student_id'] ?? 'none'));
+    die("❌ Invalid enrollment ID: " . htmlspecialchars($_GET['enrollment_id'] ?? 'none'));
 }
 
 // Fetch enrollment info (only if status is Approved)
-// Fetch enrollment info (only if status is Approved)
-$sqlEnrollment = "SELECT e.*, s.first_name, s.last_name 
+$sqlEnrollment = "SELECT e.*, s.first_name, s.last_name, s.student_id AS school_id
                   FROM enrollments e
                   JOIN students s ON e.student_id = s.student_id
                   WHERE e.id = ? AND e.status = 'approved'";
@@ -33,20 +33,6 @@ if ($result->num_rows == 0) {
 }
 
 $enrollment = $result->fetch_assoc();
-
-// Check if student_id is empty, then generate and update
-if (empty($enrollment['student_id'])) {
-    $currentYear = date("Y");
-    $student_id = $currentYear . '-' . str_pad($enrollment_id, 4, '0', STR_PAD_LEFT);
-
-    $updateStmt = $conn->prepare("UPDATE enrollments SET student_id = ? WHERE id = ?");
-   $stmt = $pdo->prepare("SELECT * FROM enrollments WHERE student_id = ? ORDER BY date_submitted DESC LIMIT 1");
-    $updateStmt->execute();
-    $updateStmt->close();
-
-    // Refresh local value
-    $enrollment['student_id'] = $student_id;
-}
 
 // Fetch subjects linked to enrollment (JOIN to get subject details)
 $sqlSubjects = "SELECT s.subject_code, s.subject_title, s.units, s.day, s.time, s.room, es.instructor
@@ -170,7 +156,7 @@ $conn->close();
       <div class="row mb-4">
         <div class="col-md-6">
           <p><strong>Student Name:</strong> <?= htmlspecialchars(($enrollment['first_name'] ?? '') . ' ' . ($enrollment['last_name'] ?? '')) ?></p>
-          <p><strong>Student ID:</strong> <?= htmlspecialchars($enrollment['student_id'] ?? '') ?></p>
+          <p><strong>Student ID:</strong> <?= htmlspecialchars($enrollment['school_id'] ?? '') ?></p>
         </div>
         <div class="col-md-6">
           <p><strong>Program:</strong> <?= htmlspecialchars($enrollment['program'] ?? '') ?></p>

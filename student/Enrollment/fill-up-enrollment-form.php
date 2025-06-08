@@ -1,53 +1,57 @@
 <?php
+
 session_start();
+
+// check kung gagana ang copied  url in another tab kahit naka logout na
+if (!isset($_SESSION['student_id'])) {
+    header("Location: /IT2C_Enrollment_System_SourceCode/logregfor/login.php");
+    exit();
+}
 
 $errors = [];
 $submitted = false;
 
 include '../../db.php';
 
-if (!isset($_SESSION['student_id'])) {
-    $errors[] = "Student not logged in.";
-} else {
-$student_id_int = $_SESSION['student_id'];  // use directly
-
-
-$stmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
-$stmt->bind_param("i", $student_id_int);
-$stmt->execute();
-$stmt->store_result();
-
-if ($stmt->num_rows === 0) {
-    $errors[] = "Student record not found. Please contact admin.";
-}
-$stmt->close();
-}
-
 $program = '';
 $yearLevel = '';
 $semester = '';
 $section = '';
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $program = $_POST['program'] ?? '';
+    $program = $_POST['program'] ?? ''; 
     $yearLevel = $_POST['yearLevel'] ?? '';
     $semester = $_POST['semester'] ?? '';
     $section = $_POST['section'] ?? '';
-
+    $school_year = date('Y') . '-' . (date('Y') + 1);
     if (empty($program) || empty($yearLevel) || empty($semester) || empty($section)) {
         $errors[] = "All fields are required.";
     }
 
     if (empty($errors)) {
-        $stmt = $conn->prepare("INSERT INTO enrollments (student_id, program, year_level, semester, section) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("issss", $student_id_int, $program, $yearLevel, $semester, $section);
-        if ($stmt->execute()) {
-            $submitted = true;
+        $student_id_str = $_SESSION['student_id'];
+
+        //pang check kung naka enrollend na ang student
+        $check = $conn->prepare("SELECT * FROM enrollments WHERE student_id = ? AND semester = ? AND school_year = ?");
+        $check->bind_param("sss", $student_id_str, $semester, $school_year);
+        $check->execute();
+        $check->store_result();
+
+        if ($check->num_rows > 0) {
+            $errors[] = "You are already enrolled for $semester, $school_year.";
         } else {
-            $errors[] = "Failed to submit enrollment. Please try again.";
+            //pang insert sa bagong ernoll na student
+            $stmt = $conn->prepare("INSERT INTO enrollments (student_id, program, year_level, semester, section, school_year) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $student_id_str, $program, $yearLevel, $semester, $section, $school_year);
+
+            if ($stmt->execute()) {
+                $submitted = true;
+            } else {
+                $errors[] = "Failed to submit enrollment. Please try again.";
+            }
+            $stmt->close();
         }
-        $stmt->close();
+        $check->close();
     }
 }
 
@@ -61,6 +65,7 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fill-up Enrollment Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="icon" href="/IT2C_Enrollment_System_SourceCode/picture/tlgc_pic.jpg" type="image/x-icon">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     body {

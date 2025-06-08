@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $timeout)) {
     session_unset();
     session_destroy();
@@ -186,6 +187,7 @@ $display_admin = $_SESSION['admin_username'] ?? 'Admin';
       </div>
     </div>
   </div>
+
   <div class="row mb-5">
     <div class="col">
       <canvas id="enrollmentChart" height="100"></canvas>
@@ -313,7 +315,7 @@ new Chart(ctx, {
     data: {
         labels: courseLabels,
         datasets: [{
-            label: 'Students per Program',
+            label: 'Students Enrolled',
             data: courseCounts,
             backgroundColor: 'rgba(75, 192, 192, 0.7)',
             borderColor: 'rgba(75, 192, 192, 1)',

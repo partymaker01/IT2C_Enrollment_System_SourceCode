@@ -34,11 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['form_action'] ?? '') === '
                 $message = "Username or email already exists.";
                 $alert_type = "error";
             } else {
-              $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-              $stmt->close();
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $stmt->close();
 
-                  $stmt = $conn->prepare("INSERT INTO students (username, first_name, middle_name,          last_name, email, password) VALUES (?, ?, ?, ?, ?, ?)");
-                  $stmt->bind_param("ssssss", $username, $first_name, $middle_name, $last_name, $email, $hashed_password);
+                // Generate unique student_id
+                $year = date('Y');
+                // Get the next auto-increment value for students table
+                $result = $conn->query("SHOW TABLE STATUS LIKE 'students'");
+                $row = $result->fetch_assoc();
+                $nextId = $row['Auto_increment'];
+                $student_id = $year . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+                $stmt = $conn->prepare("INSERT INTO students (student_id, username, first_name, middle_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssssss", $student_id, $username, $first_name, $middle_name, $last_name, $email, $hashed_password);
 
                 if ($stmt->execute()) {
                     $message = "Registration successful! You may now log in.";
