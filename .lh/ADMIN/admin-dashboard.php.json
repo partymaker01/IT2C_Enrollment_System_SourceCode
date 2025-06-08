@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 20,
+            "activePatchIndex": 21,
             "patches": [
                 {
                     "date": 1749398707087,
@@ -88,6 +88,10 @@
                 {
                     "date": 1749402183946,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -217,10 +217,10 @@\n             <div class=\"collapse navbar-collapse\" id=\"navbarNav\">\r\n                 <ul class=\"navbar-nav ms-auto\">\r\n                     <li class=\"nav-item dropdown\">\r\n                         <a class=\"nav-link dropdown-toggle d-flex align-items-center\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\">\r\n-                            <img src=\"<?= htmlspecialchars($admin['image'] ?? '../picture/tlgc_pic.jpg') ?>\" \r\n-                                 alt=\"Admin\" class=\"rounded-circle me-2\" width=\"32\" height=\"32\">\r\n+                            <!-- <img src=\"<?= htmlspecialchars($admin['image'] ?? '../picture/tlgc_pic.jpg') ?>\" \r\n+                                alt=\"Admin\" class=\"rounded-circle me-2\" width=\"32\" height=\"32\"> -->\r\n                             <?= htmlspecialchars($admin['name']) ?>\r\n                         </a>\r\n                         <ul class=\"dropdown-menu\">\r\n                             <li><a class=\"dropdown-item\" href=\"helpdeskAdminProfileSettings/profile.php\">\r\n"
+                },
+                {
+                    "date": 1749404418364,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -143,8 +143,9 @@\n     <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n     <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css\" rel=\"stylesheet\">\r\n     <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js\"></script>\r\n     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\r\n+    <link rel=\"icon\" href=\"../picture/tlgc_pic.jpg\" type=\"image/x-icon\">\r\n     <style>\r\n         body {\r\n             background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);\r\n             font-family: 'Segoe UI', sans-serif;\r\n"
                 }
             ],
             "date": 1749398707087,

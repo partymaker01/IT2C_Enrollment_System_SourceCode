@@ -447,11 +447,11 @@ INSERT INTO system_settings (setting_key, setting_value, setting_type, descripti
 
 -- Insert sample subjects
 INSERT INTO subjects (subject_code, subject_title, description, units, lecture_hours, laboratory_hours, instructor, day, time, room, semester, school_year, program, year_level, course_type) VALUES
-('IT101', 'Introduction to Computing', 'Basic concepts of computing and information technology', 3.0, 3.0, 0.0, 'Instructor 1', 'Monday,Wednesday', '8:00-9:30 AM', 'Room 101', '1st Semester', '2024-2025', 'Information Technology', '1st Year', 'major'),
-('IT102', 'Programming Fundamentals', 'Introduction to programming concepts and logic', 3.0, 2.0, 1.0, 'Instructor 2', 'Tuesday,Thursday', '10:00-11:30 AM', 'Room 102', '1st Semester', '2024-2025', 'Information Technology', '1st Year', 'major'),
-('IT103', 'Computer Hardware', 'Understanding computer hardware components', 3.0, 2.0, 1.0, 'Instructor 3', 'Friday', '1:00-4:00 PM', 'Lab 201', '1st Semester', '2024-2025', 'Information Technology', '1st Year', 'major'),
-('GE101', 'Mathematics in the Modern World', 'Mathematical concepts and applications', 3.0, 3.0, 0.0, 'Instructor4', 'Monday,Wednesday', '2:00-3:30 PM', 'Room 201', '1st Semester', '2024-2025', 'Information Technology', '1st Year', 'general_education'),
-('GE102', 'Understanding the Self', 'Personal development and self-awareness', 3.0, 3.0, 0.0, 'Instructor 5', 'Tuesday,Thursday', '3:30-5:00 PM', 'Room 202', '1st Semester', '2024-2025', 'Information Technology', '1st Year', 'general_education');
+('IT101', 'Introduction to Computing', 'Basic concepts of computing and information technology', 3.0, 3.0, 0.0, 'Prof. John Smith', 'Monday,Wednesday', '8:00-9:30 AM', 'Room 101', '1st Semester', '2024-2025', 'Bachelor of Science in Information Technology', '1st Year', 'major'),
+('IT102', 'Programming Fundamentals', 'Introduction to programming concepts and logic', 3.0, 2.0, 1.0, 'Prof. Jane Doe', 'Tuesday,Thursday', '10:00-11:30 AM', 'Room 102', '1st Semester', '2024-2025', 'Bachelor of Science in Information Technology', '1st Year', 'major'),
+('IT103', 'Computer Hardware', 'Understanding computer hardware components', 3.0, 2.0, 1.0, 'Prof. Mike Johnson', 'Friday', '1:00-4:00 PM', 'Lab 201', '1st Semester', '2024-2025', 'Bachelor of Science in Information Technology', '1st Year', 'major'),
+('GE101', 'Mathematics in the Modern World', 'Mathematical concepts and applications', 3.0, 3.0, 0.0, 'Prof. Sarah Wilson', 'Monday,Wednesday', '2:00-3:30 PM', 'Room 201', '1st Semester', '2024-2025', 'Bachelor of Science in Information Technology', '1st Year', 'general_education'),
+('GE102', 'Understanding the Self', 'Personal development and self-awareness', 3.0, 3.0, 0.0, 'Prof. Robert Brown', 'Tuesday,Thursday', '3:30-5:00 PM', 'Room 202', '1st Semester', '2024-2025', 'Bachelor of Science in Information Technology', '1st Year', 'general_education');
 
 -- Insert sample enrollment period
 INSERT INTO enrollment_periods (semester, school_year, start_date, end_date, is_active, status) 
