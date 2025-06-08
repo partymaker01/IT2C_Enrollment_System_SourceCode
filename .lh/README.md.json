@@ -1,0 +1,30 @@
+{
+    "sourceFile": "README.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1749404797965,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749404817707,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,7 +48,9 @@\n $dbname = 'enrollment_db';\r\n \r\n Visit http://localhost:8000/ in your browser\r\n \r\n+Admin:\r\n+\r\n Email: admin@example.com\r\n \r\n Password: password\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1749404825641,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,9 +48,9 @@\n $dbname = 'enrollment_db';\r\n \r\n Visit http://localhost:8000/ in your browser\r\n \r\n-Admin:\r\n+Admin: Account\r\n \r\n Email: admin@example.com\r\n \r\n Password: password\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1749404852130,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,5 +52,10 @@\n Admin: Account\r\n \r\n Email: admin@example.com\r\n \r\n-Password: password\n\\ No newline at end of file\n+Password: password\r\n+\r\n+Student:\r\n+\r\n+You need to register your account\r\n+\r\n"
+                }
+            ],
+            "date": 1749404797965,
+            "name": "Commit-0",
+            "content": "A web-based student enrollment system built using PHP, MySQL, and Bootstrap. This system allows students to register, log in, and submit enrollment forms while admins can manage, approve, reject, and view student applications.\r\n\r\n## 🚀 Features\r\n\r\n### Student Functions\r\n- 🔐 Register & Login\r\n- 📄 Submit Enrollment Form\r\n- 👁️ View Submitted Enrollment\r\n- 📤 Upload Requirements\r\n- 📥 View Approval Status\r\n\r\n### Admin Functions\r\n- 👤 Manage Student Accounts\r\n- 📋 View Submitted Enrollments\r\n- ✅ Approve, ❌ Reject, or 🕘 Mark Enrollments as Missing\r\n- 📊 Dashboard Overview\r\n\r\n## 🧱 Tech Stack\r\n- **Frontend**: HTML, CSS, Bootstrap 5.3.6\r\n- **Backend**: PHP\r\n- **Database**: MySQL\r\n- **Email Services**: PHPMailer (for password resets and email verification)\r\n\r\n## 🗂️ Project Structure\r\n\r\n📁 IT2C_Enrollment_System\r\n├── config/ # Database and config files\r\n├── css/ # Custom styles\r\n├── js/ # JavaScript functions\r\n├── includes/ # Header, footer, reusable components\r\n├── student/ # Student dashboard and forms\r\n├── admin/ # Admin dashboard and management pages\r\n├── login.php # Login page\r\n├── register.php # Registration page\r\n├── verify_email.php # Email verification handler\r\n├── reset_password/ # Password reset logic\r\n└── database.sql # Database schema\r\n\r\n## ⚙️ Installation Steps\r\n\r\n1. **Clone the repository / Extract the ZIP**\r\n   ```bash\r\n   git clone https://github.com/yourusername/IT2C_Enrollment_System.git\r\n\r\n$host = 'localhost';\r\n$user = 'root';\r\n$pass = '';\r\n$dbname = 'enrollment_db';\r\n\r\nVisit http://localhost:8000/ in your browser\r\n\r\nEmail: admin@example.com\r\n\r\nPassword: password"
+        }
+    ]
+}
