@@ -203,7 +203,7 @@ $programDistribution = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             height: 300px;
                 }
         footer {
-            background-color:rgb(36, 163, 63);
+            background-color:rgb(36, 133, 92);
             color: #fff;
             padding: 20px;
             text-align: center;

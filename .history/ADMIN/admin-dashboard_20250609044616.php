@@ -201,22 +201,7 @@ $programDistribution = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         .chart-container {
             position: relative;
             height: 300px;
-                }
-        footer {
-            background-color:rgb(36, 163, 63);
-            color: #fff;
-            padding: 20px;
-            text-align: center;
         }
-        footer a {
-            color: #cbd5e0;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: #e2e8f0;
-        }
-
     </style>
 </head>
 <body>
@@ -504,15 +489,12 @@ $programDistribution = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
 
         <!-- Footer -->
-   <footer class="bg-gray-800 text-white py-6 px-4 mt-10">
-  <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-    <p class="text-sm">&copy; 2025 Admin Dashboard. All rights reserved.</p>
-    <div class="flex space-x-4 mt-2 md:mt-0">
-      <a href="#" class="hover:text-gray-300">Privacy Policy</a>
-      <a href="#" class="hover:text-gray-300">Terms of Use</a>
-    </div>
-  </div>
-</footer>
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; <?= date('Y') ?> Top Link Global College Inc. All rights reserved.</p>
+            <p class="mb-0">Enrollment Management System</p>
+        </div>
+    </footer>
 
     <script>
         // Enrollment Trends Chart

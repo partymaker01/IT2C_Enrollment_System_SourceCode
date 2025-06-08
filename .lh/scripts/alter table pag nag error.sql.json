@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1749408624325,
@@ -16,6 +16,10 @@
                 {
                     "date": 1749413467976,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,16 @@\n \r\n -- Add the formatted_id column to students table\r\n ALTER TABLE students ADD COLUMN formatted_id VARCHAR(20) NULL;\r\n \r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n+\r\n -- Create index for better performance\r\n CREATE INDEX idx_formatted_id ON students(formatted_id);\r\n \r\n -- Check if column was added successfully\r\n"
+                },
+                {
+                    "date": 1749415689601,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,8 +11,10 @@\n \r\n \r\n \r\n \r\n+\r\n+\r\n -- Create index for better performance\r\n CREATE INDEX idx_formatted_id ON students(formatted_id);\r\n \r\n -- Check if column was added successfully\r\n"
                 }
             ],
             "date": 1749408624325,

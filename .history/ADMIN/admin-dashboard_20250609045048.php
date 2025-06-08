@@ -201,20 +201,13 @@ $programDistribution = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         .chart-container {
             position: relative;
             height: 300px;
-                }
-        footer {
-            background-color:rgb(36, 163, 63);
-            color: #fff;
-            padding: 20px;
+        }
+                .footer {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
             text-align: center;
-        }
-        footer a {
-            color: #cbd5e0;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: #e2e8f0;
+            padding: 2rem 0;
+            margin-top: 3rem;
         }
 
     </style>
