@@ -2,7 +2,6 @@
 // Fixed enrollment approval process
 session_start();
 
-require_once '../../db.php'; // <-- Add this line!
 require_once 'generate-student-id.php'; // Include the student ID generation function
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

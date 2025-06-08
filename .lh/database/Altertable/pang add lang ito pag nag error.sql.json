@@ -1,0 +1,18 @@
+{
+    "sourceFile": "database/Altertable/pang add lang ito pag nag error.sql",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1749414600396,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1749414600396,
+            "name": "Commit-0",
+            "content": "ALTER TABLE student_subjects\r\nADD COLUMN semester VARCHAR(50),\r\nADD COLUMN school_year VARCHAR(50);\r\n\r\nALTER TABLE students\r\nADD COLUMN date_registered DATETIME DEFAULT CURRENT_TIMESTAMP;\r\n\r\n\r\n-- wag mo ilalagay ito pag hindi nag error ang fil-up form\r\nALTER TABLE enrollments DROP INDEX student_id;\r\nALTER TABLE enrollments ADD UNIQUE KEY uniq_enrollment (student_id, semester, school_year);"
+        }
+    ]
+}

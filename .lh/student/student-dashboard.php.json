@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 17,
+            "activePatchIndex": 18,
             "patches": [
                 {
                     "date": 1749393758269,
@@ -76,6 +76,10 @@
                 {
                     "date": 1749414217919,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,7 @@\n <?php\n session_start();\n \n-if ($student_id == 0) {\n-    session_destroy();\n-    header(\"Location: ../logregfor/login.php\");\n-    exit;\n-}\n-\n if (!isset($_SESSION['student_id'])) {\n     header(\"Location: ../logregfor/login.php\");\n     exit;\n }\n"
+                },
+                {
+                    "date": 1749414648578,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n <?php\n+// Add this at the top of your student dashboard after session_start()\n session_start();\n \n if (!isset($_SESSION['student_id'])) {\n     header(\"Location: ../logregfor/login.php\");\n@@ -10,19 +11,23 @@\n require_once '../db.php';\n \n $student_id = $_SESSION['student_id'];\n \n-// Fetch student information\n+// Check if student exists with current session ID\n $stmt = $pdo->prepare(\"SELECT * FROM students WHERE student_id = ?\");\n $stmt->execute([$student_id]);\n $student = $stmt->fetch();\n \n+// If student not found, try to find by old ID pattern and update session\n if (!$student) {\n+    // Log the user out if student record is completely missing\n+    error_log(\"Student not found for ID: \" . $student_id);\n     session_destroy();\n     header(\"Location: ../logregfor/login.php\");\n     exit;\n }\n \n+\n // Fetch enrollment status\n $stmt = $pdo->prepare(\"SELECT * FROM enrollments WHERE student_id = ? ORDER BY date_submitted DESC LIMIT 1\");\n $stmt->execute([$student_id]);\n $enrollment = $stmt->fetch();\n"
                 }
             ],
             "date": 1749393758269,

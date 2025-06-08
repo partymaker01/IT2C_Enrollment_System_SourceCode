@@ -1,75 +1,78 @@
 <?php
 // Fixed enrollment approval process
-session_start();
-
-require_once '../../db.php'; // <-- Add this line!
-require_once 'generate-student-id.php'; // Include the student ID generation function
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $enrollmentId = intval($_POST['enrollment_id'] ?? 0);
-    $action = $_POST['action'] ?? '';
-    $remarks = $_POST['remarks'] ?? '';
-
-    $response = ['success' => false, 'message' => 'Unknown error'];
-
-    if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
-        // Get enrollment details first
-        $stmt = $conn->prepare("
-            SELECT e.*, s.student_id as current_student_id, s.id as student_table_id, s.program
-            FROM enrollments e 
-            JOIN students s ON e.student_id = s.student_id 
-            WHERE e.id = ?
-        ");
-        $stmt->bind_param("i", $enrollmentId);
-        $stmt->execute();
-        $enrollment = $stmt->get_result()->fetch_assoc();
-
-        if ($enrollment) {
-            $currentStudentId = $enrollment['current_student_id'];
-            $needsNewId = !preg_match('/^TLGC-/', $currentStudentId);
-
-            if ($action === 'approve') {
-                if ($needsNewId) {
-                    $newStudentId = generateStudentId($conn, $enrollment['program']);
-                    if (updateStudentId($conn, $currentStudentId, $newStudentId)) {
-                        $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
-                        $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
-                        $stmt->execute();
-                        $message = "Enrollment approved and Student ID updated to: {$newStudentId}";
-                        if (isset($_SESSION['student_id']) && $_SESSION['student_id'] === $currentStudentId) {
-                            $_SESSION['student_id'] = $newStudentId;
-                        }
-                    } else {
-                        $response = ['success' => false, 'message' => 'Failed to update Student ID'];
-                        echo json_encode($response);
-                        exit;
-                    }
-                } else {
-                    $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
-                    $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
-                    $stmt->execute();
-                    $message = "Enrollment approved successfully!";
-                }
-                $response = ['success' => true, 'message' => $message];
-            } elseif ($action === 'reject') {
-                $stmt = $conn->prepare("UPDATE enrollments SET status = 'rejected', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+case 'approve':
+    // Get enrollment details first
+    $stmt = $conn->prepare("
+        SELECT e.*, s.student_id as current_student_id, s.id as student_table_id
+        FROM enrollments e 
+        JOIN students s ON e.student_id = s.student_id 
+        WHERE e.id = ?
+    ");
+    $stmt->bind_param("i", $enrollmentId);
+    $stmt->execute();
+    $enrollment = $stmt->get_result()->fetch_assoc();
+    
+    if ($enrollment) {
+        $currentStudentId = $enrollment['current_student_id'];
+        $needsNewId = !preg_match('/^TLGC-/', $currentStudentId);
+        
+        if ($needsNewId) {
+            // Generate new student ID
+            $newStudentId = generateStudentId($conn, $enrollment['program']);
+            
+            // Update student ID in all related tables
+            if (updateStudentId($conn, $currentStudentId, $newStudentId)) {
+                // Update enrollment status
+                $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
                 $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
                 $stmt->execute();
-                $response = ['success' => true, 'message' => 'Enrollment rejected.'];
-            } elseif ($action === 'missing_documents') {
+                
+                $message = "Enrollment approved and Student ID updated to: {$newStudentId}";
+                
+                // IMPORTANT: Update session if this student is currently logged in
+                if (isset($_SESSION['student_id']) && $_SESSION['student_id'] === $currentStudentId) {
+                    $_SESSION['student_id'] = $newStudentId;
+                }
+                
+            } else {
+                throw new Exception("Failed to update Student ID");
+            }
+        } else {
+            // Update enrollment status only
+            $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+            $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
+            $stmt->execute();
+            
+            $message = "Enrollment approved successfully!";
+        }
+        
+        $response = ['success' => true, 'message' => $message];
+    } else {
+        throw new Exception("Enrollment not found");
+    }
+    break;
+                
+            case 'reject':
+                $stmt = $conn->prepare("UPDATE enrollments SET status = 'rejected', processed_by = ?, date_processed = NOW(), rejection_reason = ? WHERE id = ?");
+                $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
+                $stmt->execute();
+                $response = ['success' => true, 'message' => 'Enrollment rejected successfully!'];
+                break;
+                
+            case 'missing_documents':
                 $stmt = $conn->prepare("UPDATE enrollments SET status = 'missing_documents', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
                 $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
                 $stmt->execute();
-                $response = ['success' => true, 'message' => 'Enrollment marked as missing documents.'];
-            }
-        } else {
-            $response = ['success' => false, 'message' => 'Enrollment not found'];
+                $response = ['success' => true, 'message' => 'Marked as missing documents!'];
+                break;
         }
-    } else {
-        $response = ['success' => false, 'message' => 'Invalid request'];
+    } catch (Exception $e) {
+        $response = ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
+    
+    header('Content-Type: application/json');
     echo json_encode($response);
-    exit;
+    exit();
 }
 
 // Get pending enrollments with student details
