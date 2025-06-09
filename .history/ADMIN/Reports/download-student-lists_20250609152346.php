@@ -173,7 +173,7 @@ $stmt->close();
     <title>Download Student Lists - Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" href="../picture/tlgc_pic.jpg" type="image/x-icon">
+    <link rel="icon" href="download-student-lists.php" type="image/x-icon">
     <style>
         body {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);

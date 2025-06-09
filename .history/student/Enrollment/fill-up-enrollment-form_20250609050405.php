@@ -231,7 +231,7 @@ $defaultSchoolYear = $currentYear . '-' . $nextYear;
 
     <div class="container">
         <div class="form-container">
-            <h2 class="form-title">
+            <h2 class="form-title"><i class="bi bi-person-badge me-2"></i><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?>
                 <i class="bi bi-journal-plus"></i>
                 Enrollment Application Form
             </h2>

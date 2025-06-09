@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
-            // FIXED: Removed s.id as student_table_id since it doesn't exist
+            // Get enrollment details first
             $stmt = $conn->prepare("
-                SELECT e.*, s.student_id as current_student_id, s.program
+                SELECT e.*, s.student_id as current_student_id, s.id as student_table_id, s.program
                 FROM enrollments e 
                 JOIN students s ON e.student_id = s.student_id 
                 WHERE e.id = ?
@@ -106,32 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;
-}
-
-// Get pending enrollments with student details
-$stmt = $conn->prepare("
-    SELECT 
-        e.*,
-        CONCAT(s.first_name, ' ', s.last_name) as student_name,
-        s.email as student_email,
-        s.contact_number,
-        s.student_id as current_student_id
-    FROM enrollments e 
-    LEFT JOIN students s ON e.student_id = s.student_id
-    WHERE e.status = 'pending'
-    ORDER BY e.date_submitted DESC
-");
-$stmt->execute();
-$pendingEnrollments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Get statistics
-$stats = [];
-$statuses = ['pending', 'approved', 'rejected', 'missing_documents'];
-foreach ($statuses as $status) {
-    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM enrollments WHERE status = ?");
-    $stmt->bind_param("s", $status);
-    $stmt->execute();
-    $stats[$status] = $stmt->get_result()->fetch_assoc()['count'];
 }
 ?>
 

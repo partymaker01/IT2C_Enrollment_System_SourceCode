@@ -1,0 +1,37 @@
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Undefined variable $stats in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 192
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 192
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Undefined variable $stats in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 200
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 200
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Undefined variable $stats in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 208
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 208
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Undefined variable $stats in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 216
+[09-Jun-2025 10:12:59 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\IT2C_Enrollment_System_SourceCode\ADMIN\Enrollment_Management\pending-enrollments.php on line 216
+[09-Jun-2025 10:16:09 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:16:09 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:16:09 Europe/Berlin] Error in approval process: Unknown column 's.id' in 'field list'
+[09-Jun-2025 10:20:21 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:20:21 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:20:21 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:20:21 Europe/Berlin] updateStudentId error: Table 'enrollment_system.tickets' doesn't exist
+[09-Jun-2025 10:20:25 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:20:25 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:20:25 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:20:25 Europe/Berlin] updateStudentId error: Table 'enrollment_system.tickets' doesn't exist

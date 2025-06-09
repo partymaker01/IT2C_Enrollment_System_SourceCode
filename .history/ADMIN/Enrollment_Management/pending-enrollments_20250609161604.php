@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
-            // FIXED: Removed s.id as student_table_id since it doesn't exist
+            // Get enrollment details first
             $stmt = $conn->prepare("
-                SELECT e.*, s.student_id as current_student_id, s.program
+                SELECT e.*, s.student_id as current_student_id, s.id as student_table_id, s.program
                 FROM enrollments e 
                 JOIN students s ON e.student_id = s.student_id 
                 WHERE e.id = ?
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Get pending enrollments with student details
+// ADD THIS SECTION - Get pending enrollments with student details
 $stmt = $conn->prepare("
     SELECT 
         e.*,
@@ -124,7 +124,7 @@ $stmt = $conn->prepare("
 $stmt->execute();
 $pendingEnrollments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Get statistics
+// ADD THIS SECTION - Get statistics
 $stats = [];
 $statuses = ['pending', 'approved', 'rejected', 'missing_documents'];
 foreach ($statuses as $status) {

@@ -7,15 +7,16 @@ if (!isset($_SESSION['student_id'])) {
 }
 
 require_once '../../db.php';
-
 $student_id = $_SESSION['student_id'];
-$errors = [];
-$success = false;
 
-// Check if student already has a pending or approved enrollment
-$stmt = $pdo->prepare("SELECT * FROM enrollments WHERE student_id = ? AND status IN ('pending', 'approved') ORDER BY date_submitted DESC LIMIT 1");
+// Fetch student details
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
 $stmt->execute([$student_id]);
-$existingEnrollment = $stmt->fetch();
+$student = $stmt->fetch();
+
+if (!$student) {
+    die("Student not found.");
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $program = trim($_POST['program'] ?? '');
@@ -232,6 +233,7 @@ $defaultSchoolYear = $currentYear . '-' . $nextYear;
     <div class="container">
         <div class="form-container">
             <h2 class="form-title">
+                <h3><i class="bi bi-person-badge me-2"></i><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></h3>
                 <i class="bi bi-journal-plus"></i>
                 Enrollment Application Form
             </h2>

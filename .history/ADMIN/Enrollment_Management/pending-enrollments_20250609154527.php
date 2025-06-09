@@ -1,109 +1,73 @@
 <?php
-// Add this at the very top for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_errors.log');
-
 // Fixed enrollment approval process
 session_start();
 
-// Add this to check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        echo json_encode(['success' => false, 'message' => 'Admin not logged in']);
-        exit;
-    }
-    header("Location: ../../logregfor/admin-login.php");
-    exit;
-}
-
-require_once '../../db.php';
-require_once 'generate-student-id.php';
+require_once '../../db.php'; // <-- Add this line!
+require_once 'generate-student-id.php'; // Include the student ID generation function
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Clear any output buffer to ensure clean JSON response
-    ob_clean();
-    
-    // Log the POST data for debugging
-    error_log("POST Data: " . print_r($_POST, true));
-    error_log("Session admin_id: " . ($_SESSION['admin_id'] ?? 'NOT SET'));
-    
     $enrollmentId = intval($_POST['enrollment_id'] ?? 0);
     $action = $_POST['action'] ?? '';
     $remarks = $_POST['remarks'] ?? '';
 
     $response = ['success' => false, 'message' => 'Unknown error'];
 
-    try {
-        if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
-            // FIXED: Removed s.id as student_table_id since it doesn't exist
-            $stmt = $conn->prepare("
-                SELECT e.*, s.student_id as current_student_id, s.program
-                FROM enrollments e 
-                JOIN students s ON e.student_id = s.student_id 
-                WHERE e.id = ?
-            ");
-            $stmt->bind_param("i", $enrollmentId);
-            $stmt->execute();
-            $enrollment = $stmt->get_result()->fetch_assoc();
+    if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
+        // Get enrollment details first
+        $stmt = $conn->prepare("
+            SELECT e.*, s.student_id as current_student_id, s.id as student_table_id, s.program
+            FROM enrollments e 
+            JOIN students s ON e.student_id = s.student_id 
+            WHERE e.id = ?
+        ");
+        $stmt->bind_param("i", $enrollmentId);
+        $stmt->execute();
+        $enrollment = $stmt->get_result()->fetch_assoc();
 
-            if ($enrollment) {
-                $currentStudentId = $enrollment['current_student_id'];
-                $needsNewId = !preg_match('/^TLGC-/', $currentStudentId);
+        if ($enrollment) {
+            $currentStudentId = $enrollment['current_student_id'];
+            $needsNewId = !preg_match('/^TLGC-/', $currentStudentId);
 
-                if ($action === 'approve') {
-                    if ($needsNewId) {
-                        $newStudentId = generateStudentId($conn, $enrollment['program']);
-                        error_log("Generated new ID: " . $newStudentId);
-                        
-                        if (updateStudentId($conn, $currentStudentId, $newStudentId)) {
-                            $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
-                            $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
-                            $stmt->execute();
-                            $message = "Enrollment approved and Student ID updated to: {$newStudentId}";
-                            
-                            // Update session if needed
-                            if (isset($_SESSION['student_id']) && $_SESSION['student_id'] === $currentStudentId) {
-                                $_SESSION['student_id'] = $newStudentId;
-                            }
-                        } else {
-                            $response = ['success' => false, 'message' => 'Failed to update Student ID'];
-                            header('Content-Type: application/json');
-                            echo json_encode($response);
-                            exit;
-                        }
-                    } else {
-                        $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+            if ($action === 'approve') {
+                if ($needsNewId) {
+                    $newStudentId = generateStudentId($conn, $enrollment['program']);
+                    if (updateStudentId($conn, $currentStudentId, $newStudentId)) {
+                        $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE  = ?");
                         $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
                         $stmt->execute();
-                        $message = "Enrollment approved successfully!";
+                        $message = "Enrollment approved and Student ID updated to: {$newStudentId}";
+                        if (isset($_SESSION['student_id']) && $_SESSION['student_id'] === $currentStudentId) {
+                            $_SESSION['student_id'] = $newStudentId;
+                        }
+                    } else {
+                        $response = ['success' => false, 'message' => 'Failed to update Student ID'];
+                        echo json_encode($response);
+                        exit;
                     }
-                    $response = ['success' => true, 'message' => $message];
-                } elseif ($action === 'reject') {
-                    $stmt = $conn->prepare("UPDATE enrollments SET status = 'rejected', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+                } else {
+                    $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
                     $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
                     $stmt->execute();
-                    $response = ['success' => true, 'message' => 'Enrollment rejected.'];
-                } elseif ($action === 'missing_documents') {
-                    $stmt = $conn->prepare("UPDATE enrollments SET status = 'missing_documents', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
-                    $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
-                    $stmt->execute();
-                    $response = ['success' => true, 'message' => 'Enrollment marked as missing documents.'];
+                    $message = "Enrollment approved successfully!";
                 }
-            } else {
-                $response = ['success' => false, 'message' => 'Enrollment not found'];
+                $response = ['success' => true, 'message' => $message];
+            } elseif ($action === 'reject') {
+                $stmt = $conn->prepare("UPDATE enrollments SET status = 'rejected', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+                $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
+                $stmt->execute();
+                $response = ['success' => true, 'message' => 'Enrollment rejected.'];
+            } elseif ($action === 'missing_documents') {
+                $stmt = $conn->prepare("UPDATE enrollments SET status = 'missing_documents', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
+                $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
+                $stmt->execute();
+                $response = ['success' => true, 'message' => 'Enrollment marked as missing documents.'];
             }
         } else {
-            $response = ['success' => false, 'message' => 'Invalid request'];
+            $response = ['success' => false, 'message' => 'Enrollment not found'];
         }
-    } catch (Exception $e) {
-        error_log("Error in approval process: " . $e->getMessage());
-        $response = ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+    } else {
+        $response = ['success' => false, 'message' => 'Invalid request'];
     }
-    
-    // Ensure proper JSON response
-    header('Content-Type: application/json');
     echo json_encode($response);
     exit;
 }
@@ -401,19 +365,8 @@ foreach ($statuses as $status) {
 
     document.getElementById('confirmBtn').addEventListener('click', () => {
         const remarks = document.getElementById('remarksInput').value;
-        const confirmBtn = document.getElementById('confirmBtn');
-        
-        // Disable button to prevent double clicks
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = 'Processing...';
 
-        console.log('Sending request with:', {
-            enrollment_id: currentEnrollmentId,
-            action: currentAction,
-            remarks: remarks
-        });
-
-        fetch(window.location.href, {
+        fetch('', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -424,41 +377,16 @@ foreach ($statuses as $status) {
                 remarks: remarks
             })
         })
-        .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            return response.text(); // Get as text first to see what we're getting
-        })
-        .then(text => {
-            console.log('Raw response:', text);
-            
-            try {
-                const data = JSON.parse(text);
-                console.log('Parsed data:', data);
-                
-                alert(data.message);
-                if (data.success) {
-                    location.reload();
-                }
-            } catch (e) {
-                console.error('JSON parse error:', e);
-                console.error('Response text:', text);
-                alert('Invalid response from server. Check console for details.');
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                location.reload();
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
-            alert('Network error: ' + error.message);
-        })
-        .finally(() => {
-            // Re-enable button
-            confirmBtn.disabled = false;
-            confirmBtn.textContent = 'Confirm';
+            console.error('Error:', error);
+            alert('Something went wrong. Please try again.');
         });
     });
 </script>

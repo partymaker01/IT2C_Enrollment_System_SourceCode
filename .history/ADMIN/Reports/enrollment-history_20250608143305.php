@@ -74,7 +74,7 @@ $years_result = $conn->query($years_query);
     <title>Enrollment History - Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" href="../picture/tlgc_pic.jpg" type="image/x-icon">
+    <link rel="icon" href="../../favicon.ico" type="image/x-icon">
     <style>
         body {
             background-color: #f8fafc;
