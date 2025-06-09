@@ -39,11 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($enrollmentId > 0 && in_array($action, ['approve', 'reject', 'missing_documents'])) {
             // FIXED: Removed s.id as student_table_id since it doesn't exist
             $stmt = $conn->prepare("
-                SELECT e.*, s.student_id as current_student_id, s.formatted_id, s.program
-                FROM enrollments e 
-                JOIN students s ON e.student_id = s.student_id 
-                WHERE e.id = ?
-            ");
+    SELECT e.*, s.student_id as current_student_id, s.formatted_id, s.program
+    FROM enrollments e 
+    JOIN students s ON e.student_id = s.student_id 
+    WHERE e.id = ?
+");
             $stmt->bind_param("i", $enrollmentId);
             $stmt->execute();
             $enrollment = $stmt->get_result()->fetch_assoc();

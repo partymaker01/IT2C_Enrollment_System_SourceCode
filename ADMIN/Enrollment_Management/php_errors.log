@@ -177,3 +177,20 @@
 [09-Jun-2025 10:33:26 Europe/Berlin] Generated new ID: TLGC-25-0001
 [09-Jun-2025 10:33:26 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
 [09-Jun-2025 10:33:26 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:37:23 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:37:23 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:37:23 Europe/Berlin] Generated new ID: TLGC-25-0002
+[09-Jun-2025 10:37:23 Europe/Berlin] === STARTING STUDENT ID UPDATE ===
+[09-Jun-2025 10:37:23 Europe/Berlin] Old ID: 4 (this is the integer student_id)
+[09-Jun-2025 10:37:23 Europe/Berlin] New formatted ID: TLGC-25-0002
+[09-Jun-2025 10:37:23 Europe/Berlin] ✓ Found student with ID: 4, current formatted_id: TLGC-25-0001
+[09-Jun-2025 10:37:23 Europe/Berlin] ✓ New formatted ID is available
+[09-Jun-2025 10:37:23 Europe/Berlin] ✓ Updated students table: 1 rows affected
+[09-Jun-2025 10:37:23 Europe/Berlin] ✓ Verification successful - formatted_id is now: TLGC-25-0002
+[09-Jun-2025 10:37:23 Europe/Berlin] === STUDENT ID UPDATE COMPLETED SUCCESSFULLY ===
