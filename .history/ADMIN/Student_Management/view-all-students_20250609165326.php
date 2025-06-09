@@ -113,11 +113,11 @@ if ($years_result) {
 
 // If no data exists, add some default options
 if (empty($programs)) {
-    $programs = ['IT', 'HRMT', 'ECT', 'HST', 'ET', 'TVET'];
+    $programs = ['BSIT', 'BSCS', 'BSIS', 'BSBA', 'BSED', 'BEED'];
 }
 
 if (empty($years)) {
-    $years = ['1st Year', '2nd Year', '3rd Year'];
+    $years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 }
 ?>
 

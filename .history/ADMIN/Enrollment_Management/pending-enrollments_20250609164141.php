@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $newStudentId = generateStudentId($conn, $enrollment['program']);
                         error_log("Generated new ID: " . $newStudentId);
                         
-                        if (updateStudentId($conn, $enrollment['current_student_id'], $newStudentId)) {
+                        if (updateStudentId($conn, $currentStudentId, $newStudentId)) {
                             $stmt = $conn->prepare("UPDATE enrollments SET status = 'approved', processed_by = ?, date_processed = NOW(), remarks = ? WHERE id = ?");
                             $stmt->bind_param("isi", $_SESSION['admin_id'], $remarks, $enrollmentId);
                             $stmt->execute();

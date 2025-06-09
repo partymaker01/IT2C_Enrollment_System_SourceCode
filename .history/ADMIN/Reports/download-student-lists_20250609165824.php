@@ -120,15 +120,15 @@ $schoolYearOptions = fetchOptions($conn, 'school_year');
 
 // Add default options if database is empty
 if (empty($programOptions)) {
-    $programOptions = ['IT', 'HRMT', 'ECT', 'HST', 'ET', 'TVET'];
+    $programOptions = ['BSIT', 'BSCS', 'BSIS', 'BSBA', 'BSED', 'BEED', 'BSHRM', 'BSTM'];
 }
 
 if (empty($yearLevelOptions)) {
-    $yearLevelOptions = ['1st Year', '2nd Year', '3rd Year'];
+    $yearLevelOptions = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 }
 
 if (empty($sectionOptions)) {
-    $sectionOptions = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    $sectionOptions = ['A', 'B', 'C', 'D'];
 }
 
 if (empty($schoolYearOptions)) {
