@@ -35,3 +35,145 @@
 [09-Jun-2025 10:20:25 Europe/Berlin] Session admin_id: 1
 [09-Jun-2025 10:20:25 Europe/Berlin] Generated new ID: TLGC-25-0001
 [09-Jun-2025 10:20:25 Europe/Berlin] updateStudentId error: Table 'enrollment_system.tickets' doesn't exist
+[09-Jun-2025 10:24:38 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:24:38 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:24:38 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:24:38 Europe/Berlin] Table enrollments exists and will be updated
+[09-Jun-2025 10:24:38 Europe/Berlin] Table student_subjects exists and will be updated
+[09-Jun-2025 10:24:38 Europe/Berlin] Table uploaded_documents exists and will be updated
+[09-Jun-2025 10:24:39 Europe/Berlin] Table tickets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:39 Europe/Berlin] Table password_resets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:39 Europe/Berlin] Updated 1 rows in table enrollments
+[09-Jun-2025 10:24:39 Europe/Berlin] Updated 0 rows in table student_subjects
+[09-Jun-2025 10:24:39 Europe/Berlin] Updated 0 rows in table uploaded_documents
+[09-Jun-2025 10:24:39 Europe/Berlin] updateStudentId error: Duplicate entry '0' for key 'PRIMARY'
+[09-Jun-2025 10:24:39 Europe/Berlin] Rolling back transaction for student ID update
+[09-Jun-2025 10:24:41 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:24:41 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:24:41 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:24:41 Europe/Berlin] Table enrollments exists and will be updated
+[09-Jun-2025 10:24:41 Europe/Berlin] Table student_subjects exists and will be updated
+[09-Jun-2025 10:24:41 Europe/Berlin] Table uploaded_documents exists and will be updated
+[09-Jun-2025 10:24:42 Europe/Berlin] Table tickets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:42 Europe/Berlin] Table password_resets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:42 Europe/Berlin] Updated 1 rows in table enrollments
+[09-Jun-2025 10:24:42 Europe/Berlin] Updated 0 rows in table student_subjects
+[09-Jun-2025 10:24:42 Europe/Berlin] Updated 0 rows in table uploaded_documents
+[09-Jun-2025 10:24:42 Europe/Berlin] updateStudentId error: Duplicate entry '0' for key 'PRIMARY'
+[09-Jun-2025 10:24:42 Europe/Berlin] Rolling back transaction for student ID update
+[09-Jun-2025 10:24:44 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:24:44 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:24:44 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:24:44 Europe/Berlin] Table enrollments exists and will be updated
+[09-Jun-2025 10:24:44 Europe/Berlin] Table student_subjects exists and will be updated
+[09-Jun-2025 10:24:44 Europe/Berlin] Table uploaded_documents exists and will be updated
+[09-Jun-2025 10:24:44 Europe/Berlin] Table tickets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:44 Europe/Berlin] Table password_resets does not exist or doesn't have student_id column - skipping
+[09-Jun-2025 10:24:44 Europe/Berlin] Updated 1 rows in table enrollments
+[09-Jun-2025 10:24:44 Europe/Berlin] Updated 0 rows in table student_subjects
+[09-Jun-2025 10:24:44 Europe/Berlin] Updated 0 rows in table uploaded_documents
+[09-Jun-2025 10:24:44 Europe/Berlin] updateStudentId error: Duplicate entry '0' for key 'PRIMARY'
+[09-Jun-2025 10:24:44 Europe/Berlin] Rolling back transaction for student ID update
+[09-Jun-2025 10:27:02 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:27:02 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:27:02 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:27:02 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
+[09-Jun-2025 10:27:02 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:27:05 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:27:05 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:27:05 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:27:05 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
+[09-Jun-2025 10:27:05 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:27:07 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:27:07 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:27:07 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:27:07 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
+[09-Jun-2025 10:27:07 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:27:15 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:27:15 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:27:15 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:27:15 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
+[09-Jun-2025 10:27:15 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:29:51 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:29:51 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:29:51 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:29:51 Europe/Berlin] === STARTING STUDENT ID UPDATE ===
+[09-Jun-2025 10:29:51 Europe/Berlin] Old ID: 4
+[09-Jun-2025 10:29:51 Europe/Berlin] New ID: TLGC-25-0001
+[09-Jun-2025 10:29:51 Europe/Berlin] ✓ Old student ID found
+[09-Jun-2025 10:29:51 Europe/Berlin] === STUDENT ID UPDATE FAILED ===
+[09-Jun-2025 10:29:51 Europe/Berlin] Error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:29:53 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:29:53 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:29:53 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:29:53 Europe/Berlin] === STARTING STUDENT ID UPDATE ===
+[09-Jun-2025 10:29:53 Europe/Berlin] Old ID: 4
+[09-Jun-2025 10:29:53 Europe/Berlin] New ID: TLGC-25-0001
+[09-Jun-2025 10:29:53 Europe/Berlin] ✓ Old student ID found
+[09-Jun-2025 10:29:53 Europe/Berlin] === STUDENT ID UPDATE FAILED ===
+[09-Jun-2025 10:29:53 Europe/Berlin] Error: Student ID TLGC-25-0001 already exists
+[09-Jun-2025 10:33:26 Europe/Berlin] POST Data: Array
+(
+    [enrollment_id] => 4
+    [action] => approve
+    [remarks] => 
+)
+
+[09-Jun-2025 10:33:26 Europe/Berlin] Session admin_id: 1
+[09-Jun-2025 10:33:26 Europe/Berlin] Generated new ID: TLGC-25-0001
+[09-Jun-2025 10:33:26 Europe/Berlin] Starting student ID update from 4 to TLGC-25-0001
+[09-Jun-2025 10:33:26 Europe/Berlin] updateStudentId error: Student ID TLGC-25-0001 already exists

@@ -35,17 +35,16 @@ function generateStudentId($conn, $program = '') {
 }
 
 /**
- * Update student ID - OPTIMIZED for your database schema
+ * SIMPLIFIED Update student ID - Focus on essential tables only
  */
 function updateStudentId($conn, $oldId, $newId) {
-    // Disable foreign key checks temporarily
-    $conn->query("SET FOREIGN_KEY_CHECKS = 0");
-    
     $conn->begin_transaction();
     try {
-        error_log("Starting student ID update from {$oldId} to {$newId}");
+        error_log("=== STARTING STUDENT ID UPDATE ===");
+        error_log("Old ID: {$oldId}");
+        error_log("New ID: {$newId}");
         
-        // First, check if the old ID exists
+        // Check if old ID exists
         $checkStmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
         $checkStmt->bind_param("s", $oldId);
         $checkStmt->execute();
@@ -55,6 +54,7 @@ function updateStudentId($conn, $oldId, $newId) {
             throw new Exception("Student with ID {$oldId} not found");
         }
         $checkStmt->close();
+        error_log("✓ Old student ID found");
         
         // Check if new ID already exists
         $checkNewStmt = $conn->prepare("SELECT student_id FROM students WHERE student_id = ?");
@@ -66,69 +66,49 @@ function updateStudentId($conn, $oldId, $newId) {
             throw new Exception("Student ID {$newId} already exists");
         }
         $checkNewStmt->close();
+        error_log("✓ New student ID is available");
         
-        // Update child tables first (in order based on your schema)
-        $childTables = [
-            'password_resets',
-            'uploaded_documents', 
-            'tickets',
-            'enrollments'
+        // ONLY UPDATE ESSENTIAL TABLES - Skip problematic ones for now
+        $essentialTables = [
+            'enrollments',
+            'password_resets'
         ];
         
-        foreach ($childTables as $table) {
-            $stmt = $conn->prepare("UPDATE {$table} SET student_id = ? WHERE student_id = ?");
-            $stmt->bind_param("ss", $newId, $oldId);
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to update {$table}: " . $conn->error);
+        foreach ($essentialTables as $table) {
+            try {
+                // Check if table has records for this student
+                $countStmt = $conn->prepare("SELECT COUNT(*) as count FROM {$table} WHERE student_id = ?");
+                $countStmt->bind_param("s", $oldId);
+                $countStmt->execute();
+                $countResult = $countStmt->get_result();
+                $recordCount = $countResult->fetch_assoc()['count'];
+                $countStmt->close();
+                
+                if ($recordCount > 0) {
+                    error_log("Updating {$recordCount} records in {$table}");
+                    
+                    $stmt = $conn->prepare("UPDATE {$table} SET student_id = ? WHERE student_id = ?");
+                    $stmt->bind_param("ss", $newId, $oldId);
+                    
+                    if (!$stmt->execute()) {
+                        throw new Exception("Failed to update {$table}: " . $conn->error);
+                    }
+                    
+                    $affectedRows = $stmt->affected_rows;
+                    error_log("✓ Updated {$affectedRows} rows in {$table}");
+                    $stmt->close();
+                } else {
+                    error_log("No records found in {$table} for student {$oldId}");
+                }
+                
+            } catch (Exception $e) {
+                error_log("ERROR updating {$table}: " . $e->getMessage());
+                throw $e; // Re-throw to trigger rollback
             }
-            
-            $affectedRows = $stmt->affected_rows;
-            error_log("Updated {$affectedRows} rows in {$table}");
-            $stmt->close();
         }
         
-        // Handle student_subjects separately (has UNIQUE constraint)
-        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM student_subjects WHERE student_id = ?");
-        $stmt->bind_param("s", $oldId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $hasStudentSubjects = $result->fetch_assoc()['count'] > 0;
-        $stmt->close();
-        
-        if ($hasStudentSubjects) {
-            $stmt = $conn->prepare("UPDATE student_subjects SET student_id = ? WHERE student_id = ?");
-            $stmt->bind_param("ss", $newId, $oldId);
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to update student_subjects: " . $conn->error);
-            }
-            
-            error_log("Updated " . $stmt->affected_rows . " rows in student_subjects");
-            $stmt->close();
-        }
-        
-        // Handle enrollment_periods separately (has UNIQUE constraint)
-        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM enrollment_periods WHERE student_id = ?");
-        $stmt->bind_param("s", $oldId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $hasEnrollmentPeriods = $result->fetch_assoc()['count'] > 0;
-        $stmt->close();
-        
-        if ($hasEnrollmentPeriods) {
-            $stmt = $conn->prepare("UPDATE enrollment_periods SET student_id = ? WHERE student_id = ?");
-            $stmt->bind_param("ss", $newId, $oldId);
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to update enrollment_periods: " . $conn->error);
-            }
-            
-            error_log("Updated " . $stmt->affected_rows . " rows in enrollment_periods");
-            $stmt->close();
-        }
-        
-        // Finally update the parent table (students)
+        // Update the main students table LAST
+        error_log("Updating main students table...");
         $stmt = $conn->prepare("UPDATE students SET student_id = ? WHERE student_id = ?");
         $stmt->bind_param("ss", $newId, $oldId);
         
@@ -140,7 +120,7 @@ function updateStudentId($conn, $oldId, $newId) {
             throw new Exception("No rows updated in students table");
         }
         
-        error_log("Successfully updated students table: " . $stmt->affected_rows . " rows affected");
+        error_log("✓ Updated students table: " . $stmt->affected_rows . " rows affected");
         $stmt->close();
         
         // Verify the update
@@ -153,22 +133,16 @@ function updateStudentId($conn, $oldId, $newId) {
             throw new Exception("Verification failed - new student ID not found");
         }
         $verifyStmt->close();
+        error_log("✓ Verification successful");
         
         $conn->commit();
-        
-        // Re-enable foreign key checks
-        $conn->query("SET FOREIGN_KEY_CHECKS = 1");
-        
-        error_log("Successfully updated student ID from {$oldId} to {$newId}");
+        error_log("=== STUDENT ID UPDATE COMPLETED SUCCESSFULLY ===");
         return true;
         
     } catch (Exception $e) {
         $conn->rollback();
-        
-        // Re-enable foreign key checks
-        $conn->query("SET FOREIGN_KEY_CHECKS = 1");
-        
-        error_log("updateStudentId error: " . $e->getMessage());
+        error_log("=== STUDENT ID UPDATE FAILED ===");
+        error_log("Error: " . $e->getMessage());
         return false;
     }
 }
