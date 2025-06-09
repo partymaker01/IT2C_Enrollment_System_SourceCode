@@ -17,24 +17,19 @@ $token = $_GET['token'] ?? '';
 if (!$token) {
     $error = "Invalid or missing token.";
 } else {
-    try {
-        // Validate token and check expiry
-        $stmt = $pdo->prepare("SELECT email, student_id, expires_at FROM password_resets WHERE token = ?");
-        $stmt->execute([$token]);
-        $reset = $stmt->fetch();
+    // Validate token and check expiry
+    $stmt = $pdo->prepare("SELECT student_id, expires_at FROM password_resets WHERE token = ?");
+    $stmt->execute([$token]);
+    $reset = $stmt->fetch();
 
-        if (!$reset) {
-            $error = "Invalid token. The reset link may have been used already or is incorrect.";
+    if (!$reset) {
+        $error = "Invalid token. The reset link may have been used already or is incorrect.";
+    } else {
+        if (strtotime($reset['expires_at']) < time()) {
+            $error = "This password reset link has expired. Please request a new one.";
         } else {
-            if (strtotime($reset['expires_at']) < time()) {
-                $error = "This password reset link has expired. Please request a new one.";
-            } else {
-                $show_form = true;
-            }
+            $show_form = true;
         }
-    } catch (PDOException $e) {
-        error_log("Password reset token validation error: " . $e->getMessage());
-        $error = "An error occurred while processing your request. Please try again later.";
     }
 }
 
@@ -54,14 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $show_form) {
         try {
             $pdo->beginTransaction();
             
-            // Update the password - use email if student_id is not available
-            if (!empty($reset['student_id'])) {
-                $stmt = $pdo->prepare("UPDATE students SET password = ? WHERE student_id = ?");
-                $stmt->execute([$hashed_password, $reset['student_id']]);
-            } else {
-                $stmt = $pdo->prepare("UPDATE students SET password = ? WHERE email = ?");
-                $stmt->execute([$hashed_password, $reset['email']]);
-            }
+            // Update the password
+            $stmt = $pdo->prepare("UPDATE students SET password = ? WHERE student_id = ?");
+            $stmt->execute([$hashed_password, $reset['student_id']]);
             
             // Delete the used token
             $stmt = $pdo->prepare("DELETE FROM password_resets WHERE token = ?");
@@ -73,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $show_form) {
             $show_form = false;
         } catch (Exception $e) {
             $pdo->rollBack();
-            error_log("Password reset error: " . $e->getMessage());
             $error = "Error resetting password. Please try again.";
         }
     }

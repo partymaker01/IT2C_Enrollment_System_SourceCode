@@ -46,9 +46,9 @@ function validateUsername($username) {
 function validatePassword($password) {
     // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
     return strlen($password) >= 8 && 
-        preg_match('/[A-Z]/', $password) && 
-        preg_match('/[a-z]/', $password) && 
-        preg_match('/[0-9]/', $password);
+           preg_match('/[A-Z]/', $password) && 
+           preg_match('/[a-z]/', $password) && 
+           preg_match('/[0-9]/', $password);
 }
 
 function validateName($name) {
